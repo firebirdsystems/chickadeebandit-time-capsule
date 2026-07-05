@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Time Capsule</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: var(--hub-bg, #f6f7f9);
+      --surface: var(--hub-surface, #ffffff);
+      --border: var(--hub-border, #e1e5ea);
+      --border-strong: var(--hub-border, #c9d1dc);
+      --text: var(--hub-text, #111827);
+      --muted: var(--hub-text-muted, #667085);
+      --primary: var(--hub-primary, #0f766e);
+      --primary-hover: var(--hub-primary-hover, #115e59);
+      --primary-fg: var(--hub-primary-fg, #ffffff);
+      --radius: var(--hub-radius, 8px);
+      --shadow: 0 1px 3px rgba(15, 23, 42, .08);
+      --blue: #1d4ed8;
+      --blue-soft: #dbeafe;
+      --green: #047857;
+      --green-soft: #d1fae5;
+      --amber: #b45309;
+      --amber-soft: #fef3c7;
+      --red: #b91c1c;
+      --red-soft: #fee2e2;
+    }
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--hub-font, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+      font-size: var(--hub-font-size, 15px);
+      line-height: 1.5;
+    }
+    .app { max-width: 960px; margin: 0 auto; padding: 16px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    h1 { font-size: 1.32rem; line-height: 1.2; }
+    h2 { font-size: 1rem; margin-bottom: 10px; }
+    h3 { font-size: .92rem; }
+    .muted { color: var(--muted); }
+    .tiny { font-size: .78rem; }
+    .stack { display: grid; gap: 12px; }
+    .grid { display: grid; gap: 12px; }
+    .grid.two { grid-template-columns: 1fr; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .capsule-card { cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+    .capsule-card:hover { border-color: var(--border-strong); box-shadow: 0 5px 14px rgba(15, 23, 42, .08); }
+    .row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .tools { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+    .title { font-weight: 780; font-size: 1rem; }
+    .meta { margin-top: 3px; color: var(--muted); font-size: .82rem; }
+    .stats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .pill {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 24px; padding: 2px 8px; border-radius: 999px;
+      background: #eef2f7; color: var(--muted); font-size: .74rem; font-weight: 760; white-space: nowrap;
+    }
+    .pill.open { background: var(--blue-soft); color: var(--blue); }
+    .pill.closed { background: var(--amber-soft); color: var(--amber); }
+    .pill.revealed { background: var(--green-soft); color: var(--green); }
+    .tabs { display: flex; gap: 4px; background: var(--border); padding: 3px; border-radius: 10px; margin-bottom: 14px; }
+    .tab { flex: 1; border: 0; border-radius: 8px; background: transparent; color: var(--muted); padding: 7px; font-weight: 760; cursor: pointer; }
+    .tab.active { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      border: 1px solid transparent; border-radius: 8px; padding: 8px 12px;
+      font: inherit; font-size: .86rem; font-weight: 760; cursor: pointer;
+      min-height: 38px; background: var(--primary); color: var(--primary-fg);
+    }
+    .btn:hover { background: var(--primary-hover); }
+    .btn:disabled { opacity: .45; cursor: default; }
+    .btn-ghost { background: transparent; color: var(--text); border-color: var(--border-strong); }
+    .btn-ghost:hover { background: #f8fafc; }
+    .btn-danger { background: var(--red-soft); color: var(--red); border-color: transparent; }
+    .btn-danger:hover { background: #fecaca; }
+    .btn-sm { min-height: 31px; padding: 5px 9px; font-size: .78rem; }
+    .back { margin-bottom: 10px; }
+    .form { display: grid; gap: 10px; }
+    .field { display: grid; gap: 4px; }
+    label { font-size: .76rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 820; }
+    input, select, textarea {
+      width: 100%; border: 1.5px solid var(--border-strong); border-radius: 8px;
+      padding: 9px 11px; font: inherit; background: var(--surface); color: var(--text);
+    }
+    textarea { min-height: 96px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
+    .entry { display: grid; gap: 9px; border-top: 1px solid var(--border); padding-top: 12px; }
+    .entry:first-child { border-top: 0; padding-top: 0; }
+    .letter { white-space: pre-wrap; }
+    .avatar {
+      width: 22px; height: 22px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: white; font-size: .72rem; font-weight: 820; margin: 0 4px;
+    }
+    .attachment { display: inline-flex; align-items: center; gap: 6px; color: var(--blue); font-weight: 700; text-decoration: none; }
+    .empty, .loading { color: var(--muted); text-align: center; padding: 32px 16px; }
+    .error { background: var(--red-soft); color: var(--red); padding: 9px 12px; border-radius: 8px; margin-bottom: 10px; font-size: .86rem; }
+    .notice { background: var(--green-soft); color: var(--green); padding: 9px 12px; border-radius: 8px; margin-bottom: 10px; font-size: .86rem; }
+    @media (min-width: 760px) {
+      .grid.two { grid-template-columns: 1.05fr .95fr; align-items: start; }
+    }
+    @media (max-width: 600px) {
+      .topbar, .row { align-items: stretch; flex-direction: column; }
+      .tools .btn { flex: 1; }
+    }
+  </style>
+  <base href="/run/time-capsule/">
+</head>
+<body>
+<div class="app">
+  <div id="root" class="loading">Loading...</div>
+</div>
+
+<script type="module">
+import { esc, isAdult, memberColor, initial, hubConfirm, createFilesHelper } from "/hub-sdk.js";
+
+const CONTEXT = window.__CONTEXT_URL ?? window.__FAMILY_HUB_CONTEXT_URL ?? "";
+const DB = window.__DB_URL ?? "";
+const FILES = window.__FILES_URL ?? "";
+const EVENTS_URL = window.__EVENTS_URL ?? "/api/events";
+const APP_ID = window.__APP_ID ?? "time-capsule";
+const HUB_MEMBER = window.__CURRENT_MEMBER ?? null;
+const files = createFilesHelper(FILES);
+
+// Fire-and-forget cross-app event. Declared in manifest `publishes`/`alert_on`;
+// gated to adults by `publish_acls`, which matches the adult-only actions below.
+function publishEvent(type, subjectId, payload = {}) {
+  if (!DB) return; // demo mode has no event bus
+  fetch(EVENTS_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ source_app_id: APP_ID, type, subject_id: subjectId, payload }),
+  }).catch(() => {});
+}
+
+let members = [];
+let currentMember = null;
+let capsules = [];
+let entries = [];
+let attachments = [];
+let selectedCapsuleId = null;
+let showCreateForm = false;
+let view = "active";
+let error = "";
+let notice = "";
+
+function nowIso() { return new Date().toISOString(); }
+function uid(prefix) { return `${prefix}-${crypto.randomUUID()}`; }
+function today() { return new Date().toISOString().slice(0, 10); }
+function nextYear() {
+  const d = new Date();
+  d.setFullYear(d.getFullYear() + 1);
+  return d.toISOString().slice(0, 10);
+}
+function fmtDate(value) {
+  if (!value) return "";
+  return new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: "numeric" })
+    .format(new Date(`${value}T12:00:00`));
+}
+function statusLabel(status) {
+  return status === "open" ? "Open" : status === "closed" ? "Sealed" : status === "revealed" ? "Revealed" : "Archived";
+}
+function canManage() { return isAdult(currentMember); }
+function selectedCapsule() { return capsules.find(c => c.id === selectedCapsuleId) ?? null; }
+function capsuleEntries(capsuleId) {
+  return entries.filter(e => e.capsule_id === capsuleId).sort((a, b) => a.created_at.localeCompare(b.created_at));
+}
+function entryAttachments(entryId) {
+  return attachments.filter(a => a.entry_id === entryId).sort((a, b) => a.created_at.localeCompare(b.created_at));
+}
+function memberById(id) { return members.find(m => m.id === id) ?? null; }
+function canAddEntry(capsule) { return capsule?.status === "open"; }
+function canReadEntries(capsule) { return ["revealed", "archived"].includes(capsule?.status); }
+function isMine(entry) { return entry.member_id === currentMember?.id; }
+function visibleEntries(capsule) {
+  const list = capsuleEntries(capsule.id);
+  if (canReadEntries(capsule)) return list;
+  return list.filter(isMine);
+}
+
+async function dbq(sql, params = []) {
+  if (!DB) return { rows: [] };
+  const res = await fetch(DB, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sql, params }),
+  });
+  const json = await res.json();
+  if (json.error) throw new Error(json.error);
+  return json;
+}
+
+async function loadMembers() {
+  if (!CONTEXT) {
+    members = [
+      { id: "demo-1", name: "Alex", role: "adult" },
+      { id: "demo-2", name: "Jordan", role: "adult" },
+      { id: "demo-3", name: "Casey", role: "child" },
+      { id: "demo-4", name: "Riley", role: "child" },
+    ];
+  } else {
+    const res = await fetch(`${CONTEXT}?keys=family.members`);
+    members = ((await res.json())["family.members"]) ?? [];
+  }
+  currentMember = HUB_MEMBER ?? members[0] ?? { id: "guest", name: "Guest", role: "adult" };
+}
+
+async function seedDemo() {
+  if (DB) return;
+  const newYear = "demo-new-year";
+  const birthday = "demo-birthday";
+  capsules = [
+    {
+      id: newYear,
+      title: "New Year's Predictions",
+      occasion: "New Year",
+      reveal_date: nextYear(),
+      status: "open",
+      prompt: "What do you think will change by next year?",
+      created_by_id: "demo-1",
+      created_by_name: "Alex",
+      created_at: nowIso(),
+      closed_at: "",
+      revealed_at: "",
+      archived_at: "",
+    },
+    {
+      id: birthday,
+      title: "18th Birthday Letters",
+      occasion: "Birthday",
+      reveal_date: "2031-05-18",
+      status: "closed",
+      prompt: "A note for the future.",
+      created_by_id: "demo-2",
+      created_by_name: "Jordan",
+      created_at: nowIso(),
+      closed_at: nowIso(),
+      revealed_at: "",
+      archived_at: "",
+    },
+  ];
+  entries = [
+    {
+      id: "entry-1",
+      capsule_id: newYear,
+      member_id: "demo-1",
+      member_name: "Alex",
+      entry_type: "prediction",
+      title: "My bold guess",
+      body: "We will finally finish the garden beds, and Casey will be taller than Jordan.",
+      created_at: nowIso(),
+      updated_at: nowIso(),
+    },
+  ];
+  attachments = [];
+}
+
+async function loadData() {
+  if (!DB) { await seedDemo(); return; }
+  const [capsuleRows, entryRows, attachmentRows] = await Promise.all([
+    dbq("SELECT * FROM app_time_capsule__capsules ORDER BY reveal_date ASC, created_at ASC"),
+    dbq("SELECT * FROM app_time_capsule__entries ORDER BY created_at ASC"),
+    dbq("SELECT * FROM app_time_capsule__attachments ORDER BY created_at ASC"),
+  ]);
+  capsules = capsuleRows.rows;
+  entries = entryRows.rows;
+  attachments = attachmentRows.rows;
+}
+
+async function refresh() {
+  clearMessages();
+  try {
+    await loadMembers();
+    await loadData();
+    if (selectedCapsuleId && !capsules.some(c => c.id === selectedCapsuleId)) selectedCapsuleId = null;
+    render();
+  } catch (e) {
+    error = e.message;
+    render();
+  }
+}
+
+function clearMessages() { error = ""; notice = ""; }
+function showError(message) { error = message; notice = ""; render(); }
+function showNotice(message) { notice = message; error = ""; render(); }
+
+async function createCapsule(form) {
+  if (!canManage()) return showError("Only adults can create capsules.");
+  const title = form.title.value.trim();
+  const revealDate = form.reveal_date.value;
+  if (!title || !revealDate) return showError("Title and reveal date are required.");
+  const capsule = {
+    id: uid("capsule"),
+    title,
+    occasion: form.occasion.value.trim(),
+    reveal_date: revealDate,
+    status: "open",
+    prompt: form.prompt.value.trim(),
+    created_by_id: currentMember.id,
+    created_by_name: currentMember.name,
+    created_at: nowIso(),
+    closed_at: "",
+    revealed_at: "",
+    archived_at: "",
+  };
+  if (DB) {
+    await dbq(
+      `INSERT INTO app_time_capsule__capsules
+       (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [capsule.id, capsule.title, capsule.occasion, capsule.reveal_date, capsule.status, capsule.prompt, capsule.created_by_id, capsule.created_by_name, capsule.created_at]
+    );
+  }
+  capsules.push(capsule);
+  capsules.sort((a, b) => (a.reveal_date || "").localeCompare(b.reveal_date || "") || a.created_at.localeCompare(b.created_at));
+  form.reset();
+  showCreateForm = false;
+  selectedCapsuleId = capsule.id;
+  view = "active";
+  clearMessages();
+  render();
+  publishEvent("time_capsule.created", capsule.id, { title: capsule.title, reveal_date: capsule.reveal_date });
+}
+
+async function addEntry(form) {
+  const capsule = selectedCapsule();
+  if (!canAddEntry(capsule)) return showError("This capsule is sealed.");
+  const title = form.title.value.trim();
+  const body = form.body.value.trim();
+  if (!title || !body) return showError("Entry title and message are required.");
+
+  const file = form.photo?.files?.[0] ?? null;
+  const btn = form.querySelector('button[type="submit"]');
+  if (btn) { btn.disabled = true; btn.textContent = file ? "Uploading…" : "Sealing…"; }
+
+  try {
+    let attachment = null;
+    if (file && FILES) {
+      const { id: fileId } = await files.upload(file);
+      attachment = {
+        id: uid("attachment"),
+        entry_id: null,
+        capsule_id: capsule.id,
+        uploaded_by: currentMember.id,
+        file_name: file.name,
+        file_ref: fileId,
+        content_type: file.type,
+        created_at: nowIso(),
+      };
+    }
+    const entry = {
+      id: uid("entry"),
+      capsule_id: capsule.id,
+      member_id: currentMember.id,
+      member_name: currentMember.name,
+      entry_type: form.entry_type.value,
+      title,
+      body,
+      created_at: nowIso(),
+      updated_at: nowIso(),
+    };
+    if (attachment) attachment.entry_id = entry.id;
+    if (DB) {
+      await dbq(
+        `INSERT INTO app_time_capsule__entries
+         (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [entry.id, entry.capsule_id, entry.member_id, entry.member_name, entry.entry_type, entry.title, entry.body, entry.created_at, entry.updated_at]
+      );
+      if (attachment) {
+        await dbq(
+          `INSERT INTO app_time_capsule__attachments
+           (id, entry_id, capsule_id, uploaded_by, file_name, file_ref, content_type, created_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          [attachment.id, attachment.entry_id, attachment.capsule_id, attachment.uploaded_by, attachment.file_name, attachment.file_ref, attachment.content_type, attachment.created_at]
+        );
+      }
+    }
+    entries.push(entry);
+    if (attachment) attachments.push(attachment);
+    showNotice("Entry sealed.");
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.textContent = "Seal Entry"; }
+    showError(e.message);
+  }
+}
+
+async function updateCapsuleStatus(capsule, status) {
+  if (!canManage()) return showError("Only adults can change capsule status.");
+  const ok = await hubConfirm(`${statusLabel(status)} "${capsule.title}"?`);
+  if (!ok) return;
+  const fields = {
+    closed: ["closed_at", nowIso()],
+    revealed: ["revealed_at", nowIso()],
+    archived: ["archived_at", nowIso()],
+  };
+  const [stampField, stampValue] = fields[status] ?? ["archived_at", nowIso()];
+  if (DB) {
+    await dbq(
+      `UPDATE app_time_capsule__capsules SET status = ?, ${stampField} = ? WHERE id = ?`,
+      [status, stampValue, capsule.id]
+    );
+  }
+  Object.assign(capsule, { status, [stampField]: stampValue });
+  clearMessages();
+  render();
+  const eventType = { closed: "time_capsule.closed", revealed: "time_capsule.revealed" }[status];
+  if (eventType) publishEvent(eventType, capsule.id, { title: capsule.title, reveal_date: capsule.reveal_date });
+}
+
+function filteredCapsules() {
+  const active = ["open", "closed"];
+  return capsules.filter(c => view === "active" ? active.includes(c.status) : !active.includes(c.status));
+}
+
+function renderAppShell(content) {
+  return `
+    <div class="topbar">
+      <div>
+        <h1>Time Capsule</h1>
+        <div class="muted tiny">${esc(currentMember?.name ?? "Guest")}</div>
+      </div>
+      ${canManage() ? `<button class="btn" data-action="new">New Capsule</button>` : ""}
+    </div>
+    ${error ? `<div class="error">${esc(error)}</div>` : ""}
+    ${notice ? `<div class="notice">${esc(notice)}</div>` : ""}
+    ${content}
+  `;
+}
+
+function renderList() {
+  const list = filteredCapsules();
+  return renderAppShell(`
+    <div class="tabs">
+      <button class="tab ${view === "active" ? "active" : ""}" data-view="active">Active</button>
+      <button class="tab ${view === "archive" ? "active" : ""}" data-view="archive">Archive</button>
+    </div>
+    <div class="grid two">
+      <div class="stack">
+        ${list.length ? list.map(renderCapsuleCard).join("") : `<div class="empty card">No capsules here yet.</div>`}
+      </div>
+      ${canManage() && showCreateForm ? renderCreateForm() : renderMemberPanel()}
+    </div>
+  `);
+}
+
+function renderCapsuleCard(capsule) {
+  const count = capsuleEntries(capsule.id).length;
+  const mine = capsuleEntries(capsule.id).filter(isMine).length;
+  return `
+    <article class="card capsule-card" data-open="${esc(capsule.id)}">
+      <div class="row">
+        <div>
+          <div class="title">${esc(capsule.title)}</div>
+          <div class="meta">${esc(capsule.occasion || "Family")} · opens ${fmtDate(capsule.reveal_date)}</div>
+        </div>
+        <span class="pill ${esc(capsule.status)}">${statusLabel(capsule.status)}</span>
+      </div>
+      ${capsule.prompt ? `<p class="meta">${esc(capsule.prompt)}</p>` : ""}
+      <div class="stats">
+        <span class="pill">${count} ${count === 1 ? "entry" : "entries"}</span>
+        <span class="pill">${mine} yours</span>
+        <span class="pill">by ${esc(capsule.created_by_name)}</span>
+      </div>
+    </article>
+  `;
+}
+
+function renderCreateForm() {
+  return `
+    <section class="card">
+      <h2>New capsule</h2>
+      <form class="form" data-form="create">
+        <div class="field">
+          <label for="title">Title</label>
+          <input id="title" name="title" maxlength="120" placeholder="New Year's 2027" required />
+        </div>
+        <div class="field">
+          <label for="occasion">Occasion</label>
+          <input id="occasion" name="occasion" maxlength="80" placeholder="Anniversary, birthday, reunion" />
+        </div>
+        <div class="field">
+          <label for="reveal_date">Reveal date</label>
+          <input id="reveal_date" name="reveal_date" type="date" value="${nextYear()}" min="${today()}" required />
+        </div>
+        <div class="field">
+          <label for="prompt">Prompt</label>
+          <textarea id="prompt" name="prompt" maxlength="500" placeholder="What should everyone write?"></textarea>
+        </div>
+        <div class="tools" style="justify-content:flex-start">
+          <button class="btn" type="submit">Create</button>
+          <button class="btn btn-ghost" type="button" data-action="cancel-new">Cancel</button>
+        </div>
+      </form>
+    </section>
+  `;
+}
+
+function renderMemberPanel() {
+  const hint = canManage()
+    ? `Tap <strong>New Capsule</strong> to start one, or open a capsule to write.`
+    : `Open a capsule to write or read.`;
+  return `<section class="card"><h2>Your entries</h2><p class="muted">${hint}</p></section>`;
+}
+
+function renderDetail() {
+  const capsule = selectedCapsule();
+  if (!capsule) return renderList();
+  const list = visibleEntries(capsule);
+  return renderAppShell(`
+    <button class="btn btn-ghost back" data-action="back">Back</button>
+    <div class="grid two">
+      <div class="stack">
+        <section class="card">
+          <div class="row">
+            <div>
+              <h2>${esc(capsule.title)}</h2>
+              <div class="meta">${esc(capsule.occasion || "Family")} · opens ${fmtDate(capsule.reveal_date)}</div>
+            </div>
+            <span class="pill ${esc(capsule.status)}">${statusLabel(capsule.status)}</span>
+          </div>
+          ${capsule.prompt ? `<p class="meta">${esc(capsule.prompt)}</p>` : ""}
+          ${renderCapsuleActions(capsule)}
+        </section>
+        <section class="card">
+          <h2>${canReadEntries(capsule) ? "Revealed entries" : "Your sealed entries"}</h2>
+          <div class="stack">
+            ${list.length ? list.map(entry => renderEntry(capsule, entry)).join("") : `<div class="empty">No visible entries yet.</div>`}
+          </div>
+        </section>
+      </div>
+      ${canAddEntry(capsule) ? renderEntryForm() : renderClosedPanel(capsule)}
+    </div>
+  `);
+}
+
+function renderCapsuleActions(capsule) {
+  if (!canManage()) return "";
+  const close = capsule.status === "open" ? `<button class="btn btn-ghost btn-sm" data-status="closed">Seal</button>` : "";
+  const reveal = capsule.status === "closed" ? `<button class="btn btn-sm" data-status="revealed">Reveal</button>` : "";
+  const archive = capsule.status === "revealed" ? `<button class="btn btn-ghost btn-sm" data-status="archived">Archive</button>` : "";
+  return close || reveal || archive ? `<div class="tools" style="margin-top:12px">${close}${reveal}${archive}</div>` : "";
+}
+
+function renderEntry(entryCapsule, entry) {
+  const member = memberById(entry.member_id);
+  const atts = entryAttachments(entry.id);
+  return `
+    <article class="entry">
+      <div class="row">
+        <div>
+          <h3>${esc(entry.title)}</h3>
+          <div class="meta">
+            <span class="pill">${esc(entry.entry_type.replace("_", " "))}</span>
+            <span class="avatar" style="background:${memberColor(member?.id ?? entry.member_id)}">${initial(member?.name ?? entry.member_name)}</span>
+            ${esc(member?.name ?? entry.member_name)}
+          </div>
+        </div>
+        <div class="tiny muted">${fmtDate(entry.created_at.slice(0, 10))}</div>
+      </div>
+      <div class="letter">${esc(entry.body)}</div>
+      ${atts.length ? `<div>${atts.map(renderAttachment).join(" ")}</div>` : ""}
+    </article>
+  `;
+}
+
+function attachmentUrl(attachment) {
+  const ref = attachment.file_ref || "";
+  // Legacy rows stored a full URL; new rows store a hub file id.
+  if (/^https?:\/\//.test(ref) || ref.startsWith("/")) return ref;
+  return FILES ? files.url(ref) : ref;
+}
+
+function renderAttachment(attachment) {
+  const url = attachmentUrl(attachment);
+  const isImage = (attachment.content_type || "").startsWith("image/");
+  if (isImage) {
+    return `<a class="attachment" href="${esc(url)}" target="_blank" rel="noreferrer">
+      <img src="${esc(url)}" alt="${esc(attachment.file_name)}"
+        style="max-width:100%;max-height:320px;border-radius:8px;display:block;margin-top:4px" />
+    </a>`;
+  }
+  return `<a class="attachment" href="${esc(url)}" target="_blank" rel="noreferrer">📎 ${esc(attachment.file_name)}</a>`;
+}
+
+function renderEntryForm() {
+  return `
+    <section class="card">
+      <h2>Add entry</h2>
+      <form class="form" data-form="entry">
+        <div class="field">
+          <label for="entry_type">Type</label>
+          <select id="entry_type" name="entry_type">
+            <option value="letter">Letter</option>
+            <option value="prediction">Prediction</option>
+            <option value="memory">Memory</option>
+            <option value="photo_note">Photo note</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="entry_title">Title</label>
+          <input id="entry_title" name="title" maxlength="120" required />
+        </div>
+        <div class="field">
+          <label for="body">Message</label>
+          <textarea id="body" name="body" maxlength="5000" required></textarea>
+        </div>
+        ${FILES ? `
+        <div class="field">
+          <label for="photo">Photo or file</label>
+          <input id="photo" name="photo" type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,application/pdf" />
+          <div class="tiny muted">Optional — attach a photo or PDF to seal with this entry.</div>
+        </div>` : ""}
+        <button class="btn" type="submit">Seal Entry</button>
+      </form>
+    </section>
+  `;
+}
+
+function renderClosedPanel(capsule) {
+  const text = canReadEntries(capsule) ? "Everything is open." : "Entries are sealed.";
+  return `<section class="card"><h2>${statusLabel(capsule.status)}</h2><p class="muted">${text}</p></section>`;
+}
+
+function render() {
+  const root = document.getElementById("root");
+  root.className = "";
+  root.innerHTML = selectedCapsuleId ? renderDetail() : renderList();
+}
+
+document.addEventListener("click", async (event) => {
+  const open = event.target.closest("[data-open]");
+  if (open) {
+    selectedCapsuleId = open.dataset.open;
+    clearMessages();
+    render();
+    return;
+  }
+  const action = event.target.closest("[data-action]")?.dataset.action;
+  if (action === "back") {
+    selectedCapsuleId = null;
+    clearMessages();
+    render();
+    return;
+  }
+  if (action === "new") {
+    selectedCapsuleId = null;
+    showCreateForm = true;
+    view = "active";
+    clearMessages();
+    render();
+    document.getElementById("title")?.focus();
+    return;
+  }
+  if (action === "cancel-new") {
+    showCreateForm = false;
+    clearMessages();
+    render();
+    return;
+  }
+  const tab = event.target.closest("[data-view]");
+  if (tab) {
+    view = tab.dataset.view;
+    clearMessages();
+    render();
+    return;
+  }
+  const status = event.target.closest("[data-status]")?.dataset.status;
+  if (status) {
+    await updateCapsuleStatus(selectedCapsule(), status);
+  }
+});
+
+document.addEventListener("submit", async (event) => {
+  const form = event.target;
+  if (!form.matches("[data-form]")) return;
+  event.preventDefault();
+  try {
+    if (form.dataset.form === "create") await createCapsule(form);
+    if (form.dataset.form === "entry") await addEntry(form);
+  } catch (e) {
+    showError(e.message);
+  }
+});
+
+refresh();
+</script>
+</body>
+</html>

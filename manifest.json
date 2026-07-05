@@ -1,0 +1,76 @@
+{
+  "id": "time-capsule",
+  "name": "Time Capsule",
+  "version": "1.0.0",
+  "description": "Seal family letters, predictions, and photos until a shared reveal date, then open everything together.",
+  "entrypoint": "index.html",
+  "runtime": "static",
+  "category": "family",
+  "tags": ["memories", "letters", "predictions", "family", "sealed"],
+  "data_access": {
+    "reads": ["family.members"],
+    "writes": []
+  },
+  "permissions": {
+    "default_audience": "everyone",
+    "requires_approval": false
+  },
+  "storage": "db",
+  "row_policies": {
+    "capsules": {
+      "kind": "adult_writable",
+      "frozen_when": {
+        "status_column": "status",
+        "locked_values": ["archived"]
+      }
+    },
+    "entries": {
+      "kind": "sealed_until",
+      "fk_column": "capsule_id",
+      "parent_table": "capsules",
+      "writer_column": "member_id",
+      "parent_status_column": "status",
+      "visible_parent_status_values": ["revealed", "archived"],
+      "frozen_when": {
+        "status_column": "status",
+        "locked_values": ["closed", "revealed", "archived"]
+      }
+    },
+    "attachments": {
+      "kind": "sealed_until",
+      "fk_column": "capsule_id",
+      "parent_table": "capsules",
+      "writer_column": "uploaded_by",
+      "parent_status_column": "status",
+      "visible_parent_status_values": ["revealed", "archived"],
+      "frozen_when": {
+        "status_column": "status",
+        "locked_values": ["closed", "revealed", "archived"]
+      }
+    }
+  },
+  "publishes": [
+    "time_capsule.created",
+    "time_capsule.closed",
+    "time_capsule.revealed"
+  ],
+  "publish_acls": {
+    "time_capsule.created": { "require_role": "adult" },
+    "time_capsule.closed": { "require_role": "adult" },
+    "time_capsule.revealed": { "require_role": "adult" }
+  },
+  "alert_on": ["time_capsule.created", "time_capsule.revealed"],
+  "nav": { "label": "Capsules" },
+  "widget": { "label": "Time Capsule", "size": "small" },
+  "resource_limits": {
+    "max_db_bytes": 52428800,
+    "max_file_bytes": 10485760,
+    "max_files_bytes": 524288000
+  },
+  "icon": "⌛",
+  "ai_access": {
+    "allowed": true,
+    "mode": "read",
+    "db_exports": ["open_capsules"]
+  }
+}
