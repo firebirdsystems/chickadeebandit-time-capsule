@@ -16,6 +16,7 @@
     "requires_approval": false
   },
   "storage": "db",
+  "db_plaintext_columns": ["entry_type"],
   "row_policies": {
     "capsules": {
       "kind": "adult_writable",
