@@ -122,6 +122,12 @@
 
 <script type="module">
 import { esc, isAdult, memberColor, initial, hubConfirm, createFilesHelper } from "/hub-sdk.js";
+import {
+  nextYear, fmtDate, statusLabel,
+  capsuleEntries as capsuleEntriesOf, entryAttachments as entryAttachmentsOf,
+  memberById as memberByIdOf, canAddEntry, canReadEntries,
+  isMine as isMineOf, visibleEntries as visibleEntriesOf, filteredCapsules as filteredCapsulesOf,
+} from "./logic.js";
 
 const CONTEXT = window.__CONTEXT_URL ?? window.__FAMILY_HUB_CONTEXT_URL ?? "";
 const DB = window.__DB_URL ?? "";
@@ -156,36 +162,13 @@ let notice = "";
 function nowIso() { return new Date().toISOString(); }
 function uid(prefix) { return `${prefix}-${crypto.randomUUID()}`; }
 function today() { return new Date().toISOString().slice(0, 10); }
-function nextYear() {
-  const d = new Date();
-  d.setFullYear(d.getFullYear() + 1);
-  return d.toISOString().slice(0, 10);
-}
-function fmtDate(value) {
-  if (!value) return "";
-  return new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: "numeric" })
-    .format(new Date(`${value}T12:00:00`));
-}
-function statusLabel(status) {
-  return status === "open" ? "Open" : status === "closed" ? "Sealed" : status === "revealed" ? "Revealed" : "Archived";
-}
 function canManage() { return isAdult(currentMember); }
 function selectedCapsule() { return capsules.find(c => c.id === selectedCapsuleId) ?? null; }
-function capsuleEntries(capsuleId) {
-  return entries.filter(e => e.capsule_id === capsuleId).sort((a, b) => a.created_at.localeCompare(b.created_at));
-}
-function entryAttachments(entryId) {
-  return attachments.filter(a => a.entry_id === entryId).sort((a, b) => a.created_at.localeCompare(b.created_at));
-}
-function memberById(id) { return members.find(m => m.id === id) ?? null; }
-function canAddEntry(capsule) { return capsule?.status === "open"; }
-function canReadEntries(capsule) { return ["revealed", "archived"].includes(capsule?.status); }
-function isMine(entry) { return entry.member_id === currentMember?.id; }
-function visibleEntries(capsule) {
-  const list = capsuleEntries(capsule.id);
-  if (canReadEntries(capsule)) return list;
-  return list.filter(isMine);
-}
+function capsuleEntries(capsuleId) { return capsuleEntriesOf(entries, capsuleId); }
+function entryAttachments(entryId) { return entryAttachmentsOf(attachments, entryId); }
+function memberById(id) { return memberByIdOf(members, id); }
+function isMine(entry) { return isMineOf(entry, currentMember?.id); }
+function visibleEntries(capsule) { return visibleEntriesOf(entries, capsule, currentMember?.id); }
 
 async function dbq(sql, params = []) {
   if (!DB) return { rows: [] };
@@ -417,10 +400,7 @@ async function updateCapsuleStatus(capsule, status) {
   if (eventType) publishEvent(eventType, capsule.id, { title: capsule.title, reveal_date: capsule.reveal_date });
 }
 
-function filteredCapsules() {
-  const active = ["open", "closed"];
-  return capsules.filter(c => view === "active" ? active.includes(c.status) : !active.includes(c.status));
-}
+function filteredCapsules() { return filteredCapsulesOf(capsules, view); }
 
 function renderAppShell(content) {
   return `
