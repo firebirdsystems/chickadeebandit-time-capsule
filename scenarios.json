@@ -1,0 +1,99 @@
+{
+  "scenarios": [
+    {
+      "name": "entries are sealed until reveal: each member sees only their own until the capsule is revealed, then everyone sees all",
+      "members": { "a": "adult", "b": "adult", "c": "child" },
+      "steps": [
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_time_capsule__capsules (id, title, reveal_date, status, created_by_id, created_by_name, created_at) VALUES ('cap1', 'Class of 2036', '2036-06-01', 'closed', ?, 'A', '2026-01-01T00:00:00Z')",
+          "params": ["{{a}}"]
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES ('e_a', 'cap1', ?, 'A', 'letter', 'From A', 'a body', '2026-01-01T00:00:00Z', '2026-01-01T00:00:00Z'), ('e_b', 'cap1', ?, 'B', 'prediction', 'From B', 'b body', '2026-01-01T00:00:00Z', '2026-01-01T00:00:00Z'), ('e_c', 'cap1', ?, 'C', 'memory', 'From C', 'c body', '2026-01-01T00:00:00Z', '2026-01-01T00:00:00Z')",
+          "params": ["{{a}}", "{{b}}", "{{c}}"]
+        },
+        {
+          "action": "db",
+          "as": "a",
+          "sql": "SELECT id, member_id FROM app_time_capsule__entries WHERE capsule_id = ?",
+          "params": ["cap1"],
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "id": "e_a" }] }
+        },
+        {
+          "action": "db",
+          "as": "b",
+          "sql": "SELECT id FROM app_time_capsule__entries WHERE capsule_id = ?",
+          "params": ["cap1"],
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "id": "e_b" }] }
+        },
+        {
+          "action": "db",
+          "as": "c",
+          "sql": "SELECT id, body FROM app_time_capsule__entries WHERE capsule_id = ? AND member_id = ?",
+          "params": ["cap1", "{{a}}"],
+          "expect": { "status": 200, "rowCount": 0 }
+        },
+        {
+          "action": "seedRaw",
+          "sql": "UPDATE app_time_capsule__capsules SET status = 'revealed', revealed_at = '2036-06-01T00:00:00Z' WHERE id = 'cap1'"
+        },
+        {
+          "action": "db",
+          "as": "c",
+          "sql": "SELECT id FROM app_time_capsule__entries WHERE capsule_id = ?",
+          "params": ["cap1"],
+          "expect": { "status": 200, "rowCount": 3 }
+        }
+      ]
+    },
+    {
+      "name": "sealing on insert forces authorship, and once the capsule is closed entries are frozen against new writes",
+      "members": { "a": "adult", "b": "adult" },
+      "steps": [
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_time_capsule__capsules (id, title, reveal_date, status, created_by_id, created_by_name, created_at) VALUES ('cap1', 'Open Capsule', '2036-06-01', 'open', ?, 'A', '2026-01-01T00:00:00Z')",
+          "params": ["{{a}}"]
+        },
+        {
+          "action": "db",
+          "as": "a",
+          "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES ('e1', 'cap1', ?, 'A', 'letter', 't', 'original body', '2026-01-01T00:00:00Z', '2026-01-01T00:00:00Z')",
+          "params": ["{{b}}"],
+          "expect": { "status": 200 }
+        },
+        {
+          "action": "db",
+          "as": "a",
+          "sql": "SELECT member_id FROM app_time_capsule__entries WHERE id = 'e1'",
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "member_id": "scn-a" }] }
+        },
+        {
+          "action": "seedRaw",
+          "sql": "UPDATE app_time_capsule__capsules SET status = 'closed', closed_at = '2026-02-01T00:00:00Z' WHERE id = 'cap1'"
+        },
+        {
+          "action": "db",
+          "as": "a",
+          "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES ('e2', 'cap1', ?, 'A', 'letter', 't', 'late', '2026-02-02T00:00:00Z', '2026-02-02T00:00:00Z')",
+          "params": ["{{a}}"],
+          "expect": { "status": 403, "errorIncludes": "frozen" }
+        },
+        {
+          "action": "db",
+          "as": "a",
+          "sql": "UPDATE app_time_capsule__entries SET body = 'edited after close' WHERE id = 'e1'",
+          "expect": { "status": 200 }
+        },
+        {
+          "action": "db",
+          "as": "a",
+          "sql": "SELECT body FROM app_time_capsule__entries WHERE id = 'e1'",
+          "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "body": "original body" }] }
+        }
+      ]
+    }
+  ]
+}
