@@ -32,6 +32,7 @@
       "writer_column": "member_id",
       "parent_status_column": "status",
       "visible_parent_status_values": ["revealed", "archived"],
+      "visible_after_parent_column": "reveal_date",
       "frozen_when": {
         "status_column": "status",
         "locked_values": ["closed", "revealed", "archived"]
@@ -44,6 +45,7 @@
       "writer_column": "uploaded_by",
       "parent_status_column": "status",
       "visible_parent_status_values": ["revealed", "archived"],
+      "visible_after_parent_column": "reveal_date",
       "frozen_when": {
         "status_column": "status",
         "locked_values": ["closed", "revealed", "archived"]

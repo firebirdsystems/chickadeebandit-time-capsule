@@ -125,7 +125,7 @@ import { esc, isAdult, memberColor, initial, hubConfirm, createFilesHelper } fro
 import {
   nextYear, fmtDate, statusLabel,
   capsuleEntries as capsuleEntriesOf, entryAttachments as entryAttachmentsOf,
-  memberById as memberByIdOf, canAddEntry, canReadEntries,
+  memberById as memberByIdOf, canAddEntry, canReadEntries, effectiveStatus,
   isMine as isMineOf, visibleEntries as visibleEntriesOf, filteredCapsules as filteredCapsulesOf,
 } from "./logic.js";
 
@@ -443,7 +443,7 @@ function renderCapsuleCard(capsule) {
           <div class="title">${esc(capsule.title)}</div>
           <div class="meta">${esc(capsule.occasion || "Family")} · opens ${fmtDate(capsule.reveal_date)}</div>
         </div>
-        <span class="pill ${esc(capsule.status)}">${statusLabel(capsule.status)}</span>
+        <span class="pill ${esc(effectiveStatus(capsule))}">${statusLabel(effectiveStatus(capsule))}</span>
       </div>
       ${capsule.prompt ? `<p class="meta">${esc(capsule.prompt)}</p>` : ""}
       <div class="stats">
@@ -506,7 +506,7 @@ function renderDetail() {
               <h2>${esc(capsule.title)}</h2>
               <div class="meta">${esc(capsule.occasion || "Family")} · opens ${fmtDate(capsule.reveal_date)}</div>
             </div>
-            <span class="pill ${esc(capsule.status)}">${statusLabel(capsule.status)}</span>
+            <span class="pill ${esc(effectiveStatus(capsule))}">${statusLabel(effectiveStatus(capsule))}</span>
           </div>
           ${capsule.prompt ? `<p class="meta">${esc(capsule.prompt)}</p>` : ""}
           ${renderCapsuleActions(capsule)}
@@ -525,9 +525,12 @@ function renderDetail() {
 
 function renderCapsuleActions(capsule) {
   if (!canManage()) return "";
-  const close = capsule.status === "open" ? `<button class="btn btn-ghost btn-sm" data-status="closed">Seal</button>` : "";
-  const reveal = capsule.status === "closed" ? `<button class="btn btn-sm" data-status="revealed">Reveal</button>` : "";
-  const archive = capsule.status === "revealed" ? `<button class="btn btn-ghost btn-sm" data-status="archived">Archive</button>` : "";
+  // Once the reveal date has passed the hub already releases entries to everyone, so
+  // the manual Seal/Reveal boundary no longer applies — only offer them while sealed.
+  const released = canReadEntries(capsule);
+  const close = !released && capsule.status === "open" ? `<button class="btn btn-ghost btn-sm" data-status="closed">Seal</button>` : "";
+  const reveal = !released && capsule.status === "closed" ? `<button class="btn btn-sm" data-status="revealed">Reveal early</button>` : "";
+  const archive = effectiveStatus(capsule) === "revealed" ? `<button class="btn btn-ghost btn-sm" data-status="archived">Archive</button>` : "";
   return close || reveal || archive ? `<div class="tools" style="margin-top:12px">${close}${reveal}${archive}</div>` : "";
 }
 
@@ -609,7 +612,7 @@ function renderEntryForm() {
 
 function renderClosedPanel(capsule) {
   const text = canReadEntries(capsule) ? "Everything is open." : "Entries are sealed.";
-  return `<section class="card"><h2>${statusLabel(capsule.status)}</h2><p class="muted">${text}</p></section>`;
+  return `<section class="card"><h2>${statusLabel(effectiveStatus(capsule))}</h2><p class="muted">${text}</p></section>`;
 }
 
 function render() {
