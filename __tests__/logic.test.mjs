@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   nextYear, fmtDate, statusLabel, capsuleEntries, entryAttachments,
-  memberById, canAddEntry, canReadEntries, effectiveStatus, isMine, visibleEntries, filteredCapsules,
+  memberById, canAddEntry, canReadEntries, effectiveStatus, isMine, visibleEntries, filteredCapsules, searchableFields,
 } from "../src/logic.js";
 
 describe("nextYear", () => {
@@ -124,5 +124,16 @@ describe("filteredCapsules", () => {
   });
   it("other view shows revealed + archived", () => {
     expect(filteredCapsules(capsules, "revealed").map(c => c.id)).toEqual(["3", "4"]);
+  });
+});
+
+describe("searchableFields", () => {
+  it("matches on the occasion, which is how a capsule is remembered", () => {
+    const fields = searchableFields({
+      title: "Letters", occasion: "Mia's 18th birthday",
+      prompt: "what do you want her to know", created_by_name: "Ada",
+    });
+    expect(fields).toContain("Mia's 18th birthday");
+    expect(fields).toContain("what do you want her to know");
   });
 });

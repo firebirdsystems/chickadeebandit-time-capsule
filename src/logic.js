@@ -67,3 +67,13 @@ export function filteredCapsules(capsules, view) {
   const active = ["open", "closed"];
   return capsules.filter(c => view === "active" ? active.includes(c.status) : !active.includes(c.status));
 }
+
+/**
+ * Fields the in-app search matches against (see hub-sdk `searchMatch`).
+ * The occasion and the writing prompt are searchable alongside the
+ * title — capsules are remembered as "the one for Mia's 18th", which is
+ * the occasion, not the title someone typed.
+ */
+export function searchableFields(item) {
+  return [item.title, item.occasion, item.prompt, item.created_by_name];
+}
