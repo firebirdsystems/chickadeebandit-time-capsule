@@ -64,6 +64,20 @@
     "time_capsule.revealed": { "require_role": "adult" }
   },
   "alert_on": ["time_capsule.created", "time_capsule.revealed"],
+    "member_references": {
+      "capsules": {
+        "column": "created_by_id",
+        "on_removed": "keep"
+      },
+      "entries": {
+        "column": "member_id",
+        "on_removed": "keep"
+      },
+      "attachments": {
+        "column": "uploaded_by",
+        "on_removed": "keep"
+      }
+    },
   "nav": { "label": "Capsules" },
   "widget": { "label": "Time Capsule", "size": "small" },
   "resource_limits": {
