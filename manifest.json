@@ -79,6 +79,22 @@
       }
     },
   "nav": { "label": "Capsules" },
+  "agenda": {
+    "kind": "event",
+    "label": "Capsule opens",
+    "source": {
+      "kind": "sql",
+      "query": "SELECT id AS id, title AS title, NULLIF(occasion, '') AS subtitle, reveal_date AS when_at FROM app_time_capsule__capsules WHERE status <> 'archived' AND reveal_date = :today ORDER BY created_at LIMIT 20"
+    }
+  },
+  "glance": {
+    "source": {
+      "kind": "sql",
+      "query": "SELECT title AS title, occasion AS subtitle, reveal_date AS opens_on FROM app_time_capsule__capsules WHERE status IN ('open', 'closed') AND reveal_date >= :today ORDER BY reveal_date LIMIT 3"
+    },
+    "display": { "template": "list", "title": "title", "subtitle": "subtitle", "when": "opens_on" },
+    "ambient_card": "countdown"
+  },
   "widget": { "label": "Time Capsule", "size": "small" },
   "resource_limits": {
     "max_db_bytes": 52428800,
