@@ -53,6 +53,51 @@
       }
     }
   },
+  "automation_actions": {
+    "create_capsule": {
+      "title": "Open a time capsule",
+      "description": "Open a capsule pointed at a date another app already knows about — a milestone birthday, a graduation, a move. Only the container is created; every letter inside it is still written by a person.",
+      "params": {
+        "title": { "type": "text", "label": "Capsule title", "required": true },
+        "reveal_date": { "type": "text", "label": "Opens on (yyyy-mm-dd)", "required": true },
+        "occasion": { "type": "text", "label": "Occasion", "default": "" },
+        "prompt": { "type": "text", "label": "Prompt for writers", "default": "" }
+      },
+      "dedupe": { "table": "capsules", "column": "source_event_id" },
+      "steps": [
+        {
+          "op": "insert",
+          "table": "capsules",
+          "values": {
+            "id": "$uuid",
+            "title": ":title",
+            "occasion": ":occasion",
+            "prompt": ":prompt",
+            "reveal_date": ":reveal_date",
+            "status": "open",
+            "created_by_id": "automation",
+            "created_by_name": "Automation",
+            "created_at": "$now",
+            "source_event_id": "$event_id"
+          }
+        }
+      ]
+    }
+  },
+  "suggested_automations": [
+    {
+      "title": "Open a capsule for a milestone on the calendar",
+      "description": "A dated milestone opens a capsule that reveals on the day itself, so there is somewhere to put the letters months before anyone would have thought to create it.",
+      "trigger_event": "calendar.event_created",
+      "target_app_id": "time-capsule",
+      "action_id": "create_capsule",
+      "param_map": {
+        "title": { "kind": "payload_field", "value": "title" },
+        "reveal_date": { "kind": "payload_field", "value": "start_date" },
+        "prompt": { "kind": "const", "value": "Write something for whoever opens this on the day." }
+      }
+    }
+  ],
   "publishes": [
     "time_capsule.created",
     "time_capsule.closed",
