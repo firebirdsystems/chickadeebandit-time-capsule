@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   nextYear, fmtDate, statusLabel, capsuleEntries, entryAttachments,
   memberById, canAddEntry, canReadEntries, effectiveStatus, isMine, visibleEntries, filteredCapsules, searchableFields,
+  calendarRef,
 } from "../src/logic.js";
 
 describe("nextYear", () => {
@@ -135,5 +136,17 @@ describe("searchableFields", () => {
     });
     expect(fields).toContain("Mia's 18th birthday");
     expect(fields).toContain("what do you want her to know");
+  });
+});
+
+describe("calendarRef", () => {
+  it("keys a calendar entry to the capsule, not to the event that announced it", () => {
+    // The reveal date never moves, so this app needs neither an update nor a
+    // retraction — but supplying the reference is what makes the calendar's
+    // upsert idempotent, so a republish revises one entry instead of adding a
+    // second. It is also the only dated action the calendar still offers.
+    expect(calendarRef("c1")).toBe("time-capsule:c1");
+    expect(calendarRef("c1")).toBe(calendarRef("c1"));
+    expect(calendarRef("c1")).not.toBe(calendarRef("c2"));
   });
 });

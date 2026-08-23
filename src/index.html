@@ -134,6 +134,7 @@ import {
   capsuleEntries as capsuleEntriesOf, entryAttachments as entryAttachmentsOf,
   memberById as memberByIdOf, canAddEntry, canReadEntries, effectiveStatus,
   isMine as isMineOf, visibleEntries as visibleEntriesOf, filteredCapsules as filteredCapsulesOf, searchableFields,
+  calendarRef,
 } from "./logic.js";
 
 const CONTEXT = window.__CONTEXT_URL ?? window.__FAMILY_HUB_CONTEXT_URL ?? "";
@@ -319,7 +320,9 @@ async function createCapsule(form) {
   view = "active";
   clearMessages();
   render();
-  publishEvent("time_capsule.created", capsule.id, { title: capsule.title, reveal_date: capsule.reveal_date });
+  publishEvent("time_capsule.created", capsule.id, {
+    title: capsule.title, reveal_date: capsule.reveal_date, source_ref_id: calendarRef(capsule.id),
+  });
 }
 
 async function addEntry(form) {

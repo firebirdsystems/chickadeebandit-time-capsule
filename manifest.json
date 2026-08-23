@@ -2,7 +2,7 @@
   "id": "time-capsule",
   "contexts": ["household", "shared_space"],
   "name": "Time Capsule",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Seal family letters, predictions, and photos until a shared reveal date, then open everything together.",
   "entrypoint": "index.html",
   "runtime": "static",

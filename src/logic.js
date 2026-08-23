@@ -1,6 +1,19 @@
 // Pure, testable logic extracted from index.html.
 // No DOM, no network — safe to import from Node for unit tests.
 
+/**
+ * Steady identity for a calendar entry an automation rule makes from a capsule.
+ *
+ * A capsule's reveal date is fixed once it is sealed, so this app never needs to
+ * move or retract the entry — but the calendar action that only ever inserts was
+ * removed, because it made that the *easy* choice for publishers who do need to.
+ * Supplying a reference costs nothing here and makes republishing idempotent:
+ * the entry is keyed on the capsule, not on the event that announced it.
+ */
+export function calendarRef(id) {
+  return `time-capsule:${id}`;
+}
+
 export function nextYear(now = new Date()) {
   const d = new Date(now);
   d.setFullYear(d.getFullYear() + 1);
