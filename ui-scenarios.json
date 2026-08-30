@@ -1,0 +1,252 @@
+{
+  "scenarios": [
+    {
+      "name": "a sealed capsule shows a member only their own letter, and the reveal releases the rest",
+      "members": {
+        "keeper": "admin",
+        "writer": "adult"
+      },
+      "steps": [
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_time_capsule__capsules (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at) VALUES (?, ?, ?, ?, 'open', ?, ?, ?, datetime('now'))",
+          "params": [
+            "ui-c1",
+            "New Year 2030",
+            "Anniversary",
+            "2099-06-01",
+            "Write to your future self",
+            "{{keeper}}",
+            "Keeper"
+          ]
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, 'letter', ?, ?, datetime('now'), datetime('now'))",
+          "params": [
+            "ui-e1a",
+            "ui-c1",
+            "{{keeper}}",
+            "Keeper",
+            "A note from the kitchen table",
+            "I hope the porch swing is still there."
+          ]
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, 'letter', ?, ?, datetime('now'), datetime('now'))",
+          "params": [
+            "ui-e1b",
+            "ui-c1",
+            "{{writer}}",
+            "Writer",
+            "What I want to remember",
+            "The summer the tomatoes finally worked."
+          ]
+        },
+        {
+          "action": "open",
+          "as": "writer"
+        },
+        {
+          "action": "waitFor",
+          "selector": "[data-testid=\"capsule-card\"][data-capsule-id=\"ui-c1\"]",
+          "as": "writer"
+        },
+        {
+          "action": "click",
+          "selector": "[data-testid=\"capsule-card\"][data-capsule-id=\"ui-c1\"]",
+          "as": "writer"
+        },
+        {
+          "action": "waitFor",
+          "selector": "[data-testid=\"capsule-detail\"][data-capsule-id=\"ui-c1\"]",
+          "as": "writer"
+        },
+        {
+          "action": "expectCount",
+          "selector": "[data-testid=\"entry\"][data-mine=\"yes\"]",
+          "count": 1,
+          "as": "writer"
+        },
+        {
+          "action": "expectCount",
+          "selector": "[data-testid=\"entry\"][data-mine=\"no\"]",
+          "count": 0,
+          "as": "writer"
+        },
+        {
+          "action": "seedRaw",
+          "sql": "UPDATE app_time_capsule__capsules SET status = 'revealed' WHERE id = ?",
+          "params": [
+            "ui-c1"
+          ]
+        },
+        {
+          "action": "reload",
+          "as": "writer"
+        },
+        {
+          "action": "waitFor",
+          "selector": "[data-testid=\"tab-archive\"]",
+          "as": "writer"
+        },
+        {
+          "action": "click",
+          "selector": "[data-testid=\"tab-archive\"]",
+          "as": "writer"
+        },
+        {
+          "action": "waitFor",
+          "selector": "[data-testid=\"capsule-card\"][data-capsule-id=\"ui-c1\"][data-status=\"revealed\"]",
+          "as": "writer"
+        },
+        {
+          "action": "click",
+          "selector": "[data-testid=\"capsule-card\"][data-capsule-id=\"ui-c1\"]",
+          "as": "writer"
+        },
+        {
+          "action": "waitFor",
+          "selector": "[data-testid=\"capsule-detail\"][data-capsule-id=\"ui-c1\"]",
+          "as": "writer"
+        },
+        {
+          "action": "expectCount",
+          "selector": "[data-testid=\"entry\"][data-mine=\"no\"]",
+          "count": 1,
+          "as": "writer"
+        },
+        {
+          "action": "expectText",
+          "selector": "[data-testid=\"entry-list\"]",
+          "text": "I hope the porch swing is still there.",
+          "as": "writer"
+        }
+      ]
+    },
+    {
+      "name": "a capsule nobody revealed opens itself on its date, and the list still counts nothing for a sealed one",
+      "members": {
+        "keeper": "admin",
+        "writer": "adult"
+      },
+      "steps": [
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_time_capsule__capsules (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at) VALUES (?, ?, ?, ?, 'closed', ?, ?, ?, datetime('now'))",
+          "params": [
+            "ui-c2",
+            "Mia's Eighteenth",
+            "Birthday",
+            "2020-05-01",
+            "Say something to the grown-up version",
+            "{{keeper}}",
+            "Keeper"
+          ]
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, 'letter', ?, ?, datetime('now'), datetime('now'))",
+          "params": [
+            "ui-e2a",
+            "ui-c2",
+            "{{keeper}}",
+            "Keeper",
+            "From the year you were nine",
+            "You had a plastic dinosaur named Gerald."
+          ]
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, 'letter', ?, ?, datetime('now'), datetime('now'))",
+          "params": [
+            "ui-e2b",
+            "ui-c2",
+            "{{writer}}",
+            "Writer",
+            "A prediction",
+            "You will still hate mushrooms."
+          ]
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_time_capsule__capsules (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at) VALUES (?, ?, ?, ?, 'open', ?, ?, ?, datetime('now'))",
+          "params": [
+            "ui-c4",
+            "Graduation 2099",
+            "Milestone",
+            "2099-09-01",
+            "One page each, no peeking",
+            "{{keeper}}",
+            "Keeper"
+          ]
+        },
+        {
+          "action": "seedRaw",
+          "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, 'letter', ?, ?, datetime('now'), datetime('now'))",
+          "params": [
+            "ui-e4a",
+            "ui-c4",
+            "{{keeper}}",
+            "Keeper",
+            "Sealed for later",
+            "This one is not for reading yet."
+          ]
+        },
+        {
+          "action": "open",
+          "as": "writer"
+        },
+        {
+          "action": "waitFor",
+          "selector": "[data-testid=\"capsule-card\"][data-capsule-id=\"ui-c2\"]",
+          "as": "writer"
+        },
+        {
+          "action": "expectVisible",
+          "selector": "[data-testid=\"capsule-card\"][data-capsule-id=\"ui-c2\"][data-status=\"revealed\"]",
+          "as": "writer"
+        },
+        {
+          "action": "expectVisible",
+          "selector": "[data-testid=\"capsule-card\"][data-capsule-id=\"ui-c2\"][data-entry-count=\"2\"]",
+          "as": "writer"
+        },
+        {
+          "action": "expectVisible",
+          "selector": "[data-testid=\"capsule-card\"][data-capsule-id=\"ui-c4\"][data-entry-count=\"0\"]",
+          "as": "writer"
+        },
+        {
+          "action": "click",
+          "selector": "[data-testid=\"capsule-card\"][data-capsule-id=\"ui-c2\"]",
+          "as": "writer"
+        },
+        {
+          "action": "waitFor",
+          "selector": "[data-testid=\"capsule-detail\"][data-capsule-id=\"ui-c2\"]",
+          "as": "writer"
+        },
+        {
+          "action": "expectCount",
+          "selector": "[data-testid=\"entry\"]",
+          "count": 2,
+          "as": "writer"
+        },
+        {
+          "action": "expectCount",
+          "selector": "[data-testid=\"entry\"][data-mine=\"no\"]",
+          "count": 1,
+          "as": "writer"
+        },
+        {
+          "action": "expectText",
+          "selector": "[data-testid=\"entry-list\"]",
+          "text": "You had a plastic dinosaur named Gerald.",
+          "as": "writer"
+        }
+      ]
+    }
+  ]
+}

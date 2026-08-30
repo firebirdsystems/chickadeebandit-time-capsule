@@ -442,8 +442,8 @@ function renderList() {
   const list = filteredCapsules();
   return renderAppShell(`
     <div class="tabs">
-      <button class="tab ${view === "active" ? "active" : ""}" data-view="active">Active</button>
-      <button class="tab ${view === "archive" ? "active" : ""}" data-view="archive">Archive</button>
+      <button class="tab ${view === "active" ? "active" : ""}" data-testid="tab-active" data-view="active">Active</button>
+      <button class="tab ${view === "archive" ? "active" : ""}" data-testid="tab-archive" data-view="archive">Archive</button>
     </div>
     <div class="grid two">
       <div class="stack">
@@ -459,7 +459,8 @@ function renderCapsuleCard(capsule) {
   const count = capsuleEntries(capsule.id).length;
   const mine = capsuleEntries(capsule.id).filter(isMine).length;
   return `
-    <article class="card capsule-card" data-open="${esc(capsule.id)}">
+    <article class="card capsule-card" data-testid="capsule-card" data-capsule-id="${esc(capsule.id)}"
+             data-status="${esc(effectiveStatus(capsule))}" data-entry-count="${count}" data-open="${esc(capsule.id)}">
       <div class="row">
         <div>
           <div class="title">${esc(capsule.title)}</div>
@@ -519,8 +520,8 @@ function renderDetail() {
   if (!capsule) return renderList();
   const list = visibleEntries(capsule);
   return renderAppShell(`
-    <button class="btn btn-ghost back" data-action="back">Back</button>
-    <div class="grid two">
+    <button class="btn btn-ghost back" data-testid="detail-back" data-action="back">Back</button>
+    <div class="grid two" data-testid="capsule-detail" data-capsule-id="${esc(capsule.id)}">
       <div class="stack">
         <section class="card">
           <div class="row">
@@ -535,7 +536,7 @@ function renderDetail() {
         </section>
         <section class="card">
           <h2>${canReadEntries(capsule) ? "Revealed entries" : "Your sealed entries"}</h2>
-          <div class="stack">
+          <div class="stack" data-testid="entry-list">
             ${list.length ? list.map(entry => renderEntry(capsule, entry)).join("") : `<div class="empty">No visible entries yet.</div>`}
           </div>
         </section>
@@ -560,7 +561,8 @@ function renderEntry(entryCapsule, entry) {
   const member = memberById(entry.member_id);
   const atts = entryAttachments(entry.id);
   return `
-    <article class="entry">
+    <article class="entry" data-testid="entry" data-entry-id="${esc(entry.id)}"
+             data-mine="${isMine(entry) ? "yes" : "no"}">
       <div class="row">
         <div>
           <h3>${esc(entry.title)}</h3>
