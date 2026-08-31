@@ -14,10 +14,17 @@ export function calendarRef(id) {
   return `time-capsule:${id}`;
 }
 
+/** `YYYY-MM-DD` from a Date's LOCAL parts. Never `toISOString()`: the Dates in
+ *  this module are built from local components, and reading one back in UTC
+ *  names the previous day west of Greenwich. */
+function localKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 export function nextYear(now = new Date()) {
   const d = new Date(now);
   d.setFullYear(d.getFullYear() + 1);
-  return d.toISOString().slice(0, 10);
+  return localKey(d);
 }
 
 export function fmtDate(value) {
