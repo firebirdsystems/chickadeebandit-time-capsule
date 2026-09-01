@@ -257,14 +257,35 @@ async function seedDemo() {
 
 async function loadData() {
   if (!DB) { await seedDemo(); return; }
-  const [capsuleRows, entryRows, attachmentRows] = await Promise.all([
+  const [capsuleRows, entryRows] = await Promise.all([
     dbq("SELECT * FROM app_time_capsule__capsules ORDER BY reveal_date ASC, created_at ASC"),
     dbq("SELECT * FROM app_time_capsule__entries ORDER BY created_at ASC"),
-    dbq("SELECT * FROM app_time_capsule__attachments ORDER BY created_at ASC"),
   ]);
   capsules = capsuleRows.rows;
   entries = entryRows.rows;
-  attachments = attachmentRows.rows;
+}
+
+// Attachments render only inside one capsule's detail view, so the whole table
+// no longer rides along on every launch — it is fetched per capsule on first
+// open. Unlike entries, nothing counts or badges attachments on the list, so
+// dropping them from the preload changes nothing a user sees. The cached
+// promise (not a done flag) is the guard: a second open mid-fetch cannot start
+// a duplicate read, and a failure clears it so the next open retries. Merging
+// dedups by id because an attachment just uploaded is already in the array.
+const attachmentLoads = new Map();
+function loadAttachmentsFor(capsuleId) {
+  if (!DB) return Promise.resolve();
+  let p = attachmentLoads.get(capsuleId);
+  if (!p) {
+    p = dbq("SELECT * FROM app_time_capsule__attachments WHERE capsule_id = ? ORDER BY created_at ASC", [capsuleId])
+      .then((res) => {
+        const seen = new Set(attachments.map((a) => a.id));
+        attachments = [...attachments, ...(res.rows ?? []).filter((a) => !seen.has(a.id))];
+      })
+      .catch((e) => { attachmentLoads.delete(capsuleId); throw e; });
+    attachmentLoads.set(capsuleId, p);
+  }
+  return p;
 }
 
 async function refresh() {
@@ -517,6 +538,7 @@ function renderMemberPanel() {
 function renderDetail() {
   const capsule = selectedCapsule();
   if (!capsule) return renderList();
+  if (DB && !attachmentLoads.has(capsule.id)) loadAttachmentsFor(capsule.id).then(render).catch(() => {});
   const list = visibleEntries(capsule);
   return renderAppShell(`
     <button class="btn btn-ghost back" data-testid="detail-back" data-action="back">Back</button>
