@@ -1,5 +1,7 @@
 # Time Capsule
 
+A [Chickadee Bandit](https://chickadeebandit.com/app-library/time-capsule) app.
+
 Seal family letters, predictions, memories, and attachment references until a shared reveal date. Adults create, close, reveal, and archive capsules; every member can add entries while a capsule is open.
 
 ## Quick start
