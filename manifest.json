@@ -63,7 +63,7 @@
       "description": "Open a capsule pointed at a date another app already knows about — a milestone birthday, a graduation, a move. Only the container is created; every letter inside it is still written by a person.",
       "params": {
         "title": { "type": "text", "label": "Capsule title", "required": true },
-        "reveal_date": { "type": "text", "label": "Opens on (yyyy-mm-dd)", "required": true },
+        "reveal_date": { "type": "text", "format": "date", "label": "Opens on (yyyy-mm-dd)", "required": true },
         "occasion": { "type": "text", "label": "Occasion", "default": "" },
         "prompt": { "type": "text", "label": "Prompt for writers", "default": "" }
       },
