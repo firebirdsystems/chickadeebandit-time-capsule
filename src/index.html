@@ -128,7 +128,7 @@
 </div>
 
 <script type="module">
-import { esc, isAdult, memberColor, initial, hubConfirm, createFilesHelper, searchMatch, hubToday as today } from "/hub-sdk.js";
+import { esc, isAdult, memberColor, initial, hubConfirm, createFilesHelper, searchMatch, hubToday as today, glyph } from "/hub-sdk.js";
 import {
   nextYear, fmtDate, statusLabel,
   capsuleEntries as capsuleEntriesOf, entryAttachments as entryAttachmentsOf,
@@ -617,7 +617,7 @@ function renderAttachment(attachment) {
         style="max-width:100%;max-height:320px;border-radius:8px;display:block;margin-top:4px" />
     </a>`;
   }
-  return `<a class="attachment" href="${esc(url)}" target="_blank" rel="noreferrer">📎 ${esc(attachment.file_name)}</a>`;
+  return `<a class="attachment" href="${esc(url)}" target="_blank" rel="noreferrer">${glyph("paperclip")} ${esc(attachment.file_name)}</a>`;
 }
 
 function renderEntryForm() {
