@@ -359,15 +359,17 @@ async function addEntry(form) {
   try {
     let attachment = null;
     if (file && FILES) {
-      const { id: fileId } = await files.upload(file);
+      const uploaded = await files.upload(file);
+      // The hub says what it stored, which is not always what was picked: a
+      // HEIC photo is kept as a JPEG, under another name and type.
       attachment = {
         id: uid("attachment"),
         entry_id: null,
         capsule_id: capsule.id,
         uploaded_by: currentMember.id,
-        file_name: file.name,
-        file_ref: fileId,
-        content_type: file.type,
+        file_name: uploaded.name ?? file.name,
+        file_ref: uploaded.id,
+        content_type: uploaded.mimeType ?? file.type,
         created_at: nowIso(),
       };
     }

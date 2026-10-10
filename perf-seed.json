@@ -1,0 +1,952 @@
+{
+  "seed": [
+    {
+      "sql": "INSERT INTO app_time_capsule__capsules (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-40 days','+0 minutes'))",
+      "params": [
+        "perf-cap-01",
+        "New Year 2027",
+        "New Year",
+        "{{date:84}}",
+        "open",
+        "Write to the family one year from now. What do you hope is true?",
+        "{{me}}",
+        "Perf Admin"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-39 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-39 days','+5 minutes'))",
+      "params": [
+        "perf-ent-001",
+        "perf-cap-01",
+        "{{me}}",
+        "Perf Admin",
+        "letter",
+        "A note from the kitchen table",
+        "I hope the porch swing is still there, and that we still eat dinner together most nights."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-38 days','+1 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-38 days','+6 minutes'))",
+      "params": [
+        "perf-ent-002",
+        "perf-cap-01",
+        "{{partner}}",
+        "Perf Partner",
+        "prediction",
+        "What I think will happen",
+        "We will have a second dog by then. I am calling it now."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-37 days','+2 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-37 days','+7 minutes'))",
+      "params": [
+        "perf-ent-003",
+        "perf-cap-01",
+        "{{child}}",
+        "Perf Kid",
+        "memory",
+        "The summer the tomatoes finally worked",
+        "Forty-one tomatoes from two plants. We gave them to everyone on the street."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-36 days','+3 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-36 days','+8 minutes'))",
+      "params": [
+        "perf-ent-004",
+        "perf-cap-01",
+        "{{child2}}",
+        "Perf Kid Two",
+        "photo_note",
+        "The photo on the fridge",
+        "The one where nobody is looking at the camera and everyone is laughing."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-35 days','+4 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-35 days','+9 minutes'))",
+      "params": [
+        "perf-ent-005",
+        "perf-cap-01",
+        "{{adult2}}",
+        "Perf Neighbour",
+        "letter",
+        "Dear future me",
+        "Remember how nervous you were about this? It turned out fine. It usually does."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-34 days','+5 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-34 days','+10 minutes'))",
+      "params": [
+        "perf-ent-006",
+        "perf-cap-01",
+        "{{me}}",
+        "Perf Admin",
+        "prediction",
+        "My guesses",
+        "I will be taller than Mum. The car will have finally been replaced."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__capsules (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-25 days','+1 minutes'))",
+      "params": [
+        "perf-cap-02",
+        "Kid's 10th Birthday",
+        "Birthday",
+        "{{date:150}}",
+        "open",
+        "What do you want to remember about being nine?",
+        "{{partner}}",
+        "Perf Partner"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-24 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-24 days','+5 minutes'))",
+      "params": [
+        "perf-ent-007",
+        "perf-cap-02",
+        "{{partner}}",
+        "Perf Partner",
+        "photo_note",
+        "The photo on the fridge",
+        "The one where nobody is looking at the camera and everyone is laughing."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-23 days','+1 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-23 days','+6 minutes'))",
+      "params": [
+        "perf-ent-008",
+        "perf-cap-02",
+        "{{me}}",
+        "Perf Admin",
+        "letter",
+        "Dear future me",
+        "Remember how nervous you were about this? It turned out fine. It usually does."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-22 days','+2 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-22 days','+7 minutes'))",
+      "params": [
+        "perf-ent-009",
+        "perf-cap-02",
+        "{{child}}",
+        "Perf Kid",
+        "prediction",
+        "My guesses",
+        "I will be taller than Mum. The car will have finally been replaced."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-21 days','+3 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-21 days','+8 minutes'))",
+      "params": [
+        "perf-ent-010",
+        "perf-cap-02",
+        "{{adult2}}",
+        "Perf Neighbour",
+        "memory",
+        "Saturday pancakes",
+        "The time the pancake landed on the dog and he just kept it."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-20 days','+4 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-20 days','+9 minutes'))",
+      "params": [
+        "perf-ent-011",
+        "perf-cap-02",
+        "{{child2}}",
+        "Perf Kid Two",
+        "letter",
+        "To all of you",
+        "I am proud of this family more than I say. Read this twice."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__capsules (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-18 days','+2 minutes'))",
+      "params": [
+        "perf-cap-03",
+        "Our 15th Anniversary",
+        "Anniversary",
+        "{{date:260}}",
+        "open",
+        "Something you have never said out loud.",
+        "{{me}}",
+        "Perf Admin"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-17 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-17 days','+5 minutes'))",
+      "params": [
+        "perf-ent-012",
+        "perf-cap-03",
+        "{{me}}",
+        "Perf Admin",
+        "memory",
+        "Saturday pancakes",
+        "The time the pancake landed on the dog and he just kept it."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-16 days','+1 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-16 days','+6 minutes'))",
+      "params": [
+        "perf-ent-013",
+        "perf-cap-03",
+        "{{partner}}",
+        "Perf Partner",
+        "letter",
+        "To all of you",
+        "I am proud of this family more than I say. Read this twice."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-15 days','+2 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-15 days','+7 minutes'))",
+      "params": [
+        "perf-ent-014",
+        "perf-cap-03",
+        "{{child}}",
+        "Perf Kid",
+        "prediction",
+        "Three bets",
+        "We will still argue about the thermostat. The garden will be bigger. Someone will learn the guitar."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-14 days','+3 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-14 days','+8 minutes'))",
+      "params": [
+        "perf-ent-015",
+        "perf-cap-03",
+        "{{child2}}",
+        "Perf Kid Two",
+        "memory",
+        "The long drive",
+        "Eleven hours, one flat tyre, and the best roadside peaches any of us have ever had."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-13 days','+4 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-13 days','+9 minutes'))",
+      "params": [
+        "perf-ent-016",
+        "perf-cap-03",
+        "{{adult2}}",
+        "Perf Neighbour",
+        "letter",
+        "A note from the kitchen table",
+        "I hope the porch swing is still there, and that we still eat dinner together most nights."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-12 days','+5 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-12 days','+10 minutes'))",
+      "params": [
+        "perf-ent-017",
+        "perf-cap-03",
+        "{{me}}",
+        "Perf Admin",
+        "prediction",
+        "What I think will happen",
+        "We will have a second dog by then. I am calling it now."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__capsules (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-9 days','+3 minutes'))",
+      "params": [
+        "perf-cap-04",
+        "First Day of Middle School",
+        "School",
+        "{{date:330}}",
+        "open",
+        "Predictions for the year ahead.",
+        "{{partner}}",
+        "Perf Partner"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-8 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-8 days','+5 minutes'))",
+      "params": [
+        "perf-ent-018",
+        "perf-cap-04",
+        "{{partner}}",
+        "Perf Partner",
+        "memory",
+        "The long drive",
+        "Eleven hours, one flat tyre, and the best roadside peaches any of us have ever had."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-7 days','+1 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-7 days','+6 minutes'))",
+      "params": [
+        "perf-ent-019",
+        "perf-cap-04",
+        "{{me}}",
+        "Perf Admin",
+        "letter",
+        "A note from the kitchen table",
+        "I hope the porch swing is still there, and that we still eat dinner together most nights."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-6 days','+2 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-6 days','+7 minutes'))",
+      "params": [
+        "perf-ent-020",
+        "perf-cap-04",
+        "{{child}}",
+        "Perf Kid",
+        "prediction",
+        "What I think will happen",
+        "We will have a second dog by then. I am calling it now."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-5 days','+3 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-5 days','+8 minutes'))",
+      "params": [
+        "perf-ent-021",
+        "perf-cap-04",
+        "{{adult2}}",
+        "Perf Neighbour",
+        "memory",
+        "The summer the tomatoes finally worked",
+        "Forty-one tomatoes from two plants. We gave them to everyone on the street."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-4 days','+4 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-4 days','+9 minutes'))",
+      "params": [
+        "perf-ent-022",
+        "perf-cap-04",
+        "{{child2}}",
+        "Perf Kid Two",
+        "photo_note",
+        "The photo on the fridge",
+        "The one where nobody is looking at the camera and everyone is laughing."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__capsules (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-5 days','+4 minutes'))",
+      "params": [
+        "perf-cap-05",
+        "The House, Five Years On",
+        "Home",
+        "{{date:1500}}",
+        "open",
+        "Describe the house exactly as it is today.",
+        "{{me}}",
+        "Perf Admin"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-4 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-4 days','+5 minutes'))",
+      "params": [
+        "perf-ent-023",
+        "perf-cap-05",
+        "{{me}}",
+        "Perf Admin",
+        "memory",
+        "The summer the tomatoes finally worked",
+        "Forty-one tomatoes from two plants. We gave them to everyone on the street."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-3 days','+1 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-3 days','+6 minutes'))",
+      "params": [
+        "perf-ent-024",
+        "perf-cap-05",
+        "{{partner}}",
+        "Perf Partner",
+        "photo_note",
+        "The photo on the fridge",
+        "The one where nobody is looking at the camera and everyone is laughing."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-2 days','+2 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-2 days','+7 minutes'))",
+      "params": [
+        "perf-ent-025",
+        "perf-cap-05",
+        "{{child}}",
+        "Perf Kid",
+        "letter",
+        "Dear future me",
+        "Remember how nervous you were about this? It turned out fine. It usually does."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 days','+3 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-1 days','+8 minutes'))",
+      "params": [
+        "perf-ent-026",
+        "perf-cap-05",
+        "{{child2}}",
+        "Perf Kid Two",
+        "prediction",
+        "My guesses",
+        "I will be taller than Mum. The car will have finally been replaced."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','+0 days','-3 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','+0 days','-3 minutes'))",
+      "params": [
+        "perf-ent-027",
+        "perf-cap-05",
+        "{{adult2}}",
+        "Perf Neighbour",
+        "memory",
+        "Saturday pancakes",
+        "The time the pancake landed on the dog and he just kept it."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','+0 days','-3 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','+0 days','-3 minutes'))",
+      "params": [
+        "perf-ent-028",
+        "perf-cap-05",
+        "{{me}}",
+        "Perf Admin",
+        "letter",
+        "To all of you",
+        "I am proud of this family more than I say. Read this twice."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__capsules (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at, closed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-70 days','+5 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-60 days','+0 minutes'))",
+      "params": [
+        "perf-cap-06",
+        "Thanksgiving Table",
+        "Holiday",
+        "{{date:48}}",
+        "closed",
+        "One thing you are thankful for this year.",
+        "{{me}}",
+        "Perf Admin"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-69 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-69 days','+5 minutes'))",
+      "params": [
+        "perf-ent-029",
+        "perf-cap-06",
+        "{{partner}}",
+        "Perf Partner",
+        "prediction",
+        "My guesses",
+        "I will be taller than Mum. The car will have finally been replaced."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-68 days','+1 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-68 days','+6 minutes'))",
+      "params": [
+        "perf-ent-030",
+        "perf-cap-06",
+        "{{me}}",
+        "Perf Admin",
+        "memory",
+        "Saturday pancakes",
+        "The time the pancake landed on the dog and he just kept it."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-67 days','+2 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-67 days','+7 minutes'))",
+      "params": [
+        "perf-ent-031",
+        "perf-cap-06",
+        "{{child}}",
+        "Perf Kid",
+        "letter",
+        "To all of you",
+        "I am proud of this family more than I say. Read this twice."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-66 days','+3 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-66 days','+8 minutes'))",
+      "params": [
+        "perf-ent-032",
+        "perf-cap-06",
+        "{{adult2}}",
+        "Perf Neighbour",
+        "prediction",
+        "Three bets",
+        "We will still argue about the thermostat. The garden will be bigger. Someone will learn the guitar."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-65 days','+4 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-65 days','+9 minutes'))",
+      "params": [
+        "perf-ent-033",
+        "perf-cap-06",
+        "{{child2}}",
+        "Perf Kid Two",
+        "memory",
+        "The long drive",
+        "Eleven hours, one flat tyre, and the best roadside peaches any of us have ever had."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__capsules (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at, closed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-130 days','+6 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-120 days','+0 minutes'))",
+      "params": [
+        "perf-cap-07",
+        "Graduation Letters",
+        "Graduation",
+        "{{date:2400}}",
+        "closed",
+        "Advice for the graduate, to be read on the day.",
+        "{{adult2}}",
+        "Perf Neighbour"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-129 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-129 days','+5 minutes'))",
+      "params": [
+        "perf-ent-034",
+        "perf-cap-07",
+        "{{me}}",
+        "Perf Admin",
+        "prediction",
+        "Three bets",
+        "We will still argue about the thermostat. The garden will be bigger. Someone will learn the guitar."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-128 days','+1 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-128 days','+6 minutes'))",
+      "params": [
+        "perf-ent-035",
+        "perf-cap-07",
+        "{{partner}}",
+        "Perf Partner",
+        "memory",
+        "The long drive",
+        "Eleven hours, one flat tyre, and the best roadside peaches any of us have ever had."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-127 days','+2 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-127 days','+7 minutes'))",
+      "params": [
+        "perf-ent-036",
+        "perf-cap-07",
+        "{{child}}",
+        "Perf Kid",
+        "letter",
+        "A note from the kitchen table",
+        "I hope the porch swing is still there, and that we still eat dinner together most nights."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-126 days','+3 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-126 days','+8 minutes'))",
+      "params": [
+        "perf-ent-037",
+        "perf-cap-07",
+        "{{child2}}",
+        "Perf Kid Two",
+        "prediction",
+        "What I think will happen",
+        "We will have a second dog by then. I am calling it now."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-125 days','+4 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-125 days','+9 minutes'))",
+      "params": [
+        "perf-ent-038",
+        "perf-cap-07",
+        "{{adult2}}",
+        "Perf Neighbour",
+        "memory",
+        "The summer the tomatoes finally worked",
+        "Forty-one tomatoes from two plants. We gave them to everyone on the street."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-124 days','+5 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-124 days','+10 minutes'))",
+      "params": [
+        "perf-ent-039",
+        "perf-cap-07",
+        "{{me}}",
+        "Perf Admin",
+        "photo_note",
+        "The photo on the fridge",
+        "The one where nobody is looking at the camera and everyone is laughing."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__capsules (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at, closed_at, revealed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-150 days','+7 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-140 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-20 days','+0 minutes'))",
+      "params": [
+        "perf-cap-08",
+        "Summer Road Trip",
+        "Trip",
+        "{{date:-20}}",
+        "revealed",
+        "What do you think we will remember most?",
+        "{{partner}}",
+        "Perf Partner"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-149 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-149 days','+5 minutes'))",
+      "params": [
+        "perf-ent-040",
+        "perf-cap-08",
+        "{{partner}}",
+        "Perf Partner",
+        "prediction",
+        "What I think will happen",
+        "We will have a second dog by then. I am calling it now."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-148 days','+1 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-148 days','+6 minutes'))",
+      "params": [
+        "perf-ent-041",
+        "perf-cap-08",
+        "{{me}}",
+        "Perf Admin",
+        "memory",
+        "The summer the tomatoes finally worked",
+        "Forty-one tomatoes from two plants. We gave them to everyone on the street."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-147 days','+2 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-147 days','+7 minutes'))",
+      "params": [
+        "perf-ent-042",
+        "perf-cap-08",
+        "{{child}}",
+        "Perf Kid",
+        "photo_note",
+        "The photo on the fridge",
+        "The one where nobody is looking at the camera and everyone is laughing."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-146 days','+3 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-146 days','+8 minutes'))",
+      "params": [
+        "perf-ent-043",
+        "perf-cap-08",
+        "{{adult2}}",
+        "Perf Neighbour",
+        "letter",
+        "Dear future me",
+        "Remember how nervous you were about this? It turned out fine. It usually does."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-145 days','+4 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-145 days','+9 minutes'))",
+      "params": [
+        "perf-ent-044",
+        "perf-cap-08",
+        "{{child2}}",
+        "Perf Kid Two",
+        "prediction",
+        "My guesses",
+        "I will be taller than Mum. The car will have finally been replaced."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__capsules (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at, closed_at, revealed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-400 days','+8 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-390 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-110 days','+0 minutes'))",
+      "params": [
+        "perf-cap-09",
+        "School Year 2025-26",
+        "School",
+        "{{date:-110}}",
+        "revealed",
+        "Predictions for the school year.",
+        "{{me}}",
+        "Perf Admin"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-399 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-399 days','+5 minutes'))",
+      "params": [
+        "perf-ent-045",
+        "perf-cap-09",
+        "{{me}}",
+        "Perf Admin",
+        "letter",
+        "Dear future me",
+        "Remember how nervous you were about this? It turned out fine. It usually does."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-398 days','+1 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-398 days','+6 minutes'))",
+      "params": [
+        "perf-ent-046",
+        "perf-cap-09",
+        "{{partner}}",
+        "Perf Partner",
+        "prediction",
+        "My guesses",
+        "I will be taller than Mum. The car will have finally been replaced."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-397 days','+2 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-397 days','+7 minutes'))",
+      "params": [
+        "perf-ent-047",
+        "perf-cap-09",
+        "{{child}}",
+        "Perf Kid",
+        "memory",
+        "Saturday pancakes",
+        "The time the pancake landed on the dog and he just kept it."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-396 days','+3 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-396 days','+8 minutes'))",
+      "params": [
+        "perf-ent-048",
+        "perf-cap-09",
+        "{{child2}}",
+        "Perf Kid Two",
+        "letter",
+        "To all of you",
+        "I am proud of this family more than I say. Read this twice."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-395 days','+4 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-395 days','+9 minutes'))",
+      "params": [
+        "perf-ent-049",
+        "perf-cap-09",
+        "{{adult2}}",
+        "Perf Neighbour",
+        "prediction",
+        "Three bets",
+        "We will still argue about the thermostat. The garden will be bigger. Someone will learn the guitar."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-394 days','+5 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-394 days','+10 minutes'))",
+      "params": [
+        "perf-ent-050",
+        "perf-cap-09",
+        "{{me}}",
+        "Perf Admin",
+        "memory",
+        "The long drive",
+        "Eleven hours, one flat tyre, and the best roadside peaches any of us have ever had."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__capsules (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at, closed_at, revealed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-560 days','+9 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-550 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-200 days','+0 minutes'))",
+      "params": [
+        "perf-cap-10",
+        "Moving Day",
+        "Home",
+        "{{date:-200}}",
+        "revealed",
+        "What will you miss about the old place?",
+        "{{me}}",
+        "Perf Admin"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-559 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-559 days','+5 minutes'))",
+      "params": [
+        "perf-ent-051",
+        "perf-cap-10",
+        "{{partner}}",
+        "Perf Partner",
+        "letter",
+        "To all of you",
+        "I am proud of this family more than I say. Read this twice."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-558 days','+1 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-558 days','+6 minutes'))",
+      "params": [
+        "perf-ent-052",
+        "perf-cap-10",
+        "{{me}}",
+        "Perf Admin",
+        "prediction",
+        "Three bets",
+        "We will still argue about the thermostat. The garden will be bigger. Someone will learn the guitar."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-557 days','+2 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-557 days','+7 minutes'))",
+      "params": [
+        "perf-ent-053",
+        "perf-cap-10",
+        "{{child}}",
+        "Perf Kid",
+        "memory",
+        "The long drive",
+        "Eleven hours, one flat tyre, and the best roadside peaches any of us have ever had."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-556 days','+3 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-556 days','+8 minutes'))",
+      "params": [
+        "perf-ent-054",
+        "perf-cap-10",
+        "{{adult2}}",
+        "Perf Neighbour",
+        "letter",
+        "A note from the kitchen table",
+        "I hope the porch swing is still there, and that we still eat dinner together most nights."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-555 days','+4 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-555 days','+9 minutes'))",
+      "params": [
+        "perf-ent-055",
+        "perf-cap-10",
+        "{{child2}}",
+        "Perf Kid Two",
+        "prediction",
+        "What I think will happen",
+        "We will have a second dog by then. I am calling it now."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__capsules (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at, closed_at, revealed_at, archived_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-650 days','+10 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-640 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-281 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-251 days','+0 minutes'))",
+      "params": [
+        "perf-cap-11",
+        "New Year 2026",
+        "New Year",
+        "{{date:-281}}",
+        "archived",
+        "Write to the family one year from now.",
+        "{{me}}",
+        "Perf Admin"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-649 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-649 days','+5 minutes'))",
+      "params": [
+        "perf-ent-056",
+        "perf-cap-11",
+        "{{me}}",
+        "Perf Admin",
+        "letter",
+        "A note from the kitchen table",
+        "I hope the porch swing is still there, and that we still eat dinner together most nights."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-648 days','+1 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-648 days','+6 minutes'))",
+      "params": [
+        "perf-ent-057",
+        "perf-cap-11",
+        "{{partner}}",
+        "Perf Partner",
+        "prediction",
+        "What I think will happen",
+        "We will have a second dog by then. I am calling it now."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-647 days','+2 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-647 days','+7 minutes'))",
+      "params": [
+        "perf-ent-058",
+        "perf-cap-11",
+        "{{child}}",
+        "Perf Kid",
+        "memory",
+        "The summer the tomatoes finally worked",
+        "Forty-one tomatoes from two plants. We gave them to everyone on the street."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-646 days','+3 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-646 days','+8 minutes'))",
+      "params": [
+        "perf-ent-059",
+        "perf-cap-11",
+        "{{child2}}",
+        "Perf Kid Two",
+        "photo_note",
+        "The photo on the fridge",
+        "The one where nobody is looking at the camera and everyone is laughing."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-645 days','+4 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-645 days','+9 minutes'))",
+      "params": [
+        "perf-ent-060",
+        "perf-cap-11",
+        "{{adult2}}",
+        "Perf Neighbour",
+        "letter",
+        "Dear future me",
+        "Remember how nervous you were about this? It turned out fine. It usually does."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-644 days','+5 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-644 days','+10 minutes'))",
+      "params": [
+        "perf-ent-061",
+        "perf-cap-11",
+        "{{me}}",
+        "Perf Admin",
+        "prediction",
+        "My guesses",
+        "I will be taller than Mum. The car will have finally been replaced."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__capsules (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at, closed_at, revealed_at, archived_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-600 days','+11 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-590 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-420 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-390 days','+0 minutes'))",
+      "params": [
+        "perf-cap-12",
+        "Grandma's 80th",
+        "Birthday",
+        "{{date:-420}}",
+        "archived",
+        "A favourite memory with Grandma.",
+        "{{partner}}",
+        "Perf Partner"
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-599 days','+0 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-599 days','+5 minutes'))",
+      "params": [
+        "perf-ent-062",
+        "perf-cap-12",
+        "{{partner}}",
+        "Perf Partner",
+        "photo_note",
+        "The photo on the fridge",
+        "The one where nobody is looking at the camera and everyone is laughing."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-598 days','+1 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-598 days','+6 minutes'))",
+      "params": [
+        "perf-ent-063",
+        "perf-cap-12",
+        "{{me}}",
+        "Perf Admin",
+        "letter",
+        "Dear future me",
+        "Remember how nervous you were about this? It turned out fine. It usually does."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-597 days','+2 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-597 days','+7 minutes'))",
+      "params": [
+        "perf-ent-064",
+        "perf-cap-12",
+        "{{child}}",
+        "Perf Kid",
+        "prediction",
+        "My guesses",
+        "I will be taller than Mum. The car will have finally been replaced."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-596 days','+3 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-596 days','+8 minutes'))",
+      "params": [
+        "perf-ent-065",
+        "perf-cap-12",
+        "{{adult2}}",
+        "Perf Neighbour",
+        "memory",
+        "Saturday pancakes",
+        "The time the pancake landed on the dog and he just kept it."
+      ]
+    },
+    {
+      "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now','-595 days','+4 minutes'), strftime('%Y-%m-%dT%H:%M:%fZ','now','-595 days','+9 minutes'))",
+      "params": [
+        "perf-ent-066",
+        "perf-cap-12",
+        "{{child2}}",
+        "Perf Kid Two",
+        "letter",
+        "To all of you",
+        "I am proud of this family more than I say. Read this twice."
+      ]
+    }
+  ]
+}
