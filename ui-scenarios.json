@@ -247,6 +247,93 @@
           "as": "writer"
         }
       ]
+    },
+    {
+      "name": "a capsule the hub refuses to save stays in its form as typed, says so, and saves when sent again",
+      "members": {
+        "keeper": "admin"
+      },
+      "steps": [
+        {
+          "action": "open",
+          "as": "keeper"
+        },
+        {
+          "action": "click",
+          "selector": "[data-action=\"new\"]",
+          "as": "keeper"
+        },
+        {
+          "action": "fill",
+          "selector": "#title",
+          "value": "Porch letters",
+          "as": "keeper"
+        },
+        {
+          "action": "fill",
+          "selector": "#prompt",
+          "value": "What should we still be doing in ten years?",
+          "as": "keeper"
+        },
+        {
+          "action": "fault",
+          "mode": "down",
+          "as": "keeper"
+        },
+        {
+          "action": "click",
+          "selector": "form[data-form=\"create\"] button[type=\"submit\"]",
+          "as": "keeper"
+        },
+        {
+          "action": "expectVisible",
+          "selector": "form[data-form=\"create\"] [data-form-error]",
+          "as": "keeper"
+        },
+        {
+          "action": "expectText",
+          "selector": "form[data-form=\"create\"] [data-form-error]",
+          "text": "Couldn’t create the capsule — try again.",
+          "as": "keeper"
+        },
+        {
+          "action": "expectCount",
+          "selector": "[data-testid=\"capsule-card\"]",
+          "count": 0,
+          "as": "keeper"
+        },
+        {
+          "action": "fault",
+          "mode": "none",
+          "as": "keeper"
+        },
+        {
+          "action": "click",
+          "selector": "form[data-form=\"create\"] button[type=\"submit\"]",
+          "as": "keeper"
+        },
+        {
+          "action": "expectText",
+          "selector": "[data-testid=\"capsule-detail\"]",
+          "text": "Porch letters",
+          "as": "keeper"
+        },
+        {
+          "action": "reload",
+          "as": "keeper"
+        },
+        {
+          "action": "expectCount",
+          "selector": "[data-testid=\"capsule-card\"]",
+          "count": 1,
+          "as": "keeper"
+        },
+        {
+          "action": "expectText",
+          "text": "Porch letters",
+          "as": "keeper"
+        }
+      ]
     }
   ]
 }

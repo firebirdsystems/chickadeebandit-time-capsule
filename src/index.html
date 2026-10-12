@@ -315,12 +315,31 @@ async function refresh() {
 function clearMessages() { error = ""; notice = ""; }
 function showError(message) { error = message; notice = ""; render(); }
 function showNotice(message) { notice = message; error = ""; render(); }
+// A form's own failure is said in the form, without redrawing it: a redraw
+// would empty what was typed, and a refused save must leave that to send again.
+function showFormError(form, message) {
+  const note = form.querySelector("[data-form-error]");
+  if (!note || !form.isConnected) return showError(message);
+  note.textContent = message;
+  note.hidden = false;
+}
+
+// The file already uploaded for the entry form that is open, kept while its
+// entry is still unsaved: sending the form again reuses it instead of storing
+// the same file twice. Picking another file, or leaving the form, discards it.
+let pendingUpload = null; // { form, file, uploaded }
+function discardPendingUpload() {
+  const pending = pendingUpload;
+  pendingUpload = null;
+  // Best-effort: the hub lets the uploader delete a file nothing refers to.
+  if (pending) files.delete(pending.uploaded.id).catch(() => {});
+}
 
 async function createCapsule(form) {
   if (!canManage()) return showError("Only adults can create capsules.");
   const title = form.title.value.trim();
   const revealDate = form.reveal_date.value;
-  if (!title || !revealDate) return showError("Title and reveal date are required.");
+  if (!title || !revealDate) return showFormError(form, "Title and reveal date are required.");
   const capsule = {
     id: uid("capsule"),
     title,
@@ -336,12 +355,17 @@ async function createCapsule(form) {
     archived_at: "",
   };
   if (DB) {
-    await dbq(
-      `INSERT INTO app_time_capsule__capsules
-       (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [capsule.id, capsule.title, capsule.occasion, capsule.reveal_date, capsule.status, capsule.prompt, capsule.created_by_id, capsule.created_by_name, capsule.created_at]
-    );
+    try {
+      await dbq(
+        `INSERT INTO app_time_capsule__capsules
+         (id, title, occasion, reveal_date, status, prompt, created_by_id, created_by_name, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [capsule.id, capsule.title, capsule.occasion, capsule.reveal_date, capsule.status, capsule.prompt, capsule.created_by_id, capsule.created_by_name, capsule.created_at]
+      );
+    } catch (e) {
+      console.error(e);
+      return showFormError(form, "Couldn’t create the capsule — try again.");
+    }
   }
   capsules.push(capsule);
   capsules.sort((a, b) => (a.reveal_date || "").localeCompare(b.reveal_date || "") || a.created_at.localeCompare(b.created_at));
@@ -361,7 +385,7 @@ async function addEntry(form) {
   if (!canAddEntry(capsule)) return showError("This capsule is sealed.");
   const title = form.title.value.trim();
   const body = form.body.value.trim();
-  if (!title || !body) return showError("Entry title and message are required.");
+  if (!title || !body) return showFormError(form, "Entry title and message are required.");
 
   const file = form.photo?.files?.[0] ?? null;
   const btn = form.querySelector('button[type="submit"]');
@@ -369,8 +393,10 @@ async function addEntry(form) {
 
   try {
     let attachment = null;
+    if (pendingUpload && (pendingUpload.form !== form || pendingUpload.file !== file)) discardPendingUpload();
     if (file && FILES) {
-      const uploaded = await files.upload(file);
+      const uploaded = pendingUpload?.uploaded ?? await files.upload(file);
+      pendingUpload = { form, file, uploaded };
       // The hub says what it stored, which is not always what was picked: a
       // HEIC photo is kept as a JPEG, under another name and type.
       attachment = {
@@ -397,27 +423,43 @@ async function addEntry(form) {
     };
     if (attachment) attachment.entry_id = entry.id;
     if (DB) {
-      await dbq(
-        `INSERT INTO app_time_capsule__entries
-         (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [entry.id, entry.capsule_id, entry.member_id, entry.member_name, entry.entry_type, entry.title, entry.body, entry.created_at, entry.updated_at]
-      );
-      if (attachment) {
+      try {
         await dbq(
-          `INSERT INTO app_time_capsule__attachments
-           (id, entry_id, capsule_id, uploaded_by, file_name, file_ref, content_type, created_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-          [attachment.id, attachment.entry_id, attachment.capsule_id, attachment.uploaded_by, attachment.file_name, attachment.file_ref, attachment.content_type, attachment.created_at]
+          `INSERT INTO app_time_capsule__entries
+           (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [entry.id, entry.capsule_id, entry.member_id, entry.member_name, entry.entry_type, entry.title, entry.body, entry.created_at, entry.updated_at]
         );
+      } catch (e) {
+        console.error(e);
+        throw new Error("Couldn’t seal the entry — try again.");
+      }
+      // Sealed: the upload belongs to this entry now, not to the form.
+      pendingUpload = null;
+      if (attachment) {
+        // The entry is sealed by now. A file that then fails to attach must
+        // not read as an unsaved entry, or sending again would seal it twice.
+        try {
+          await dbq(
+            `INSERT INTO app_time_capsule__attachments
+             (id, entry_id, capsule_id, uploaded_by, file_name, file_ref, content_type, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [attachment.id, attachment.entry_id, attachment.capsule_id, attachment.uploaded_by, attachment.file_name, attachment.file_ref, attachment.content_type, attachment.created_at]
+          );
+        } catch {
+          entries.push(entry);
+          return showError("Entry sealed, but the file couldn’t be attached.");
+        }
       }
     }
+    pendingUpload = null;
     entries.push(entry);
     if (attachment) attachments.push(attachment);
     showNotice("Entry sealed.");
   } catch (e) {
+    // Nothing was sealed: the form stays as typed, file included, to send again.
     if (btn) { btn.disabled = false; btn.textContent = "Seal Entry"; }
-    showError(e.message);
+    showFormError(form, e.message);
   }
 }
 
@@ -439,7 +481,8 @@ async function updateCapsuleStatus(capsule, status) {
         [status, stampValue, capsule.id]
       );
     } catch (e) {
-      return showError(e.message);
+      console.error(e);
+      return showError("Couldn’t update the capsule — try again.");
     }
     // An archived capsule is frozen: the hub changes nothing and says so only
     // in the count. Someone else archived it, so show what the hub holds.
@@ -544,6 +587,7 @@ function renderCreateForm() {
           <label for="prompt">Prompt</label>
           <textarea id="prompt" name="prompt" maxlength="500" placeholder="What should everyone write?"></textarea>
         </div>
+        <div class="error" role="alert" data-form-error hidden></div>
         <div class="tools" style="justify-content:flex-start">
           <button class="btn" type="submit">Create</button>
           <button class="btn btn-ghost" type="button" data-action="cancel-new">Cancel</button>
@@ -674,6 +718,7 @@ function renderEntryForm() {
             accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,application/pdf" />
           <div class="tiny muted">Optional — attach a photo or PDF to seal with this entry.</div>
         </div>` : ""}
+        <div class="error" role="alert" data-form-error hidden></div>
         <button class="btn" type="submit">Seal Entry</button>
       </form>
     </section>
@@ -689,7 +734,15 @@ function render() {
   const root = document.getElementById("root");
   root.className = "";
   root.innerHTML = selectedCapsuleId ? renderDetail() : renderList();
+  // A redraw replaces the entry form, and the file picked in it is gone with it.
+  if (pendingUpload && !pendingUpload.form.isConnected) discardPendingUpload();
 }
+
+// Another file picked (or the file cleared) after a refused save: the first
+// upload is no longer what this form will seal.
+document.addEventListener("change", (e) => {
+  if (e.target.id === "photo" && pendingUpload) discardPendingUpload();
+});
 
 // Re-render only the list on each keystroke so the search box keeps focus.
 document.addEventListener("input", (e) => {
@@ -747,11 +800,19 @@ document.addEventListener("submit", async (event) => {
   const form = event.target;
   if (!form.matches("[data-form]")) return;
   event.preventDefault();
+  const btn = form.querySelector('button[type="submit"]');
+  if (btn?.disabled) return;
+  const note = form.querySelector("[data-form-error]");
+  if (note) note.hidden = true;
   try {
-    if (form.dataset.form === "create") await createCapsule(form);
+    if (form.dataset.form === "create") {
+      // One save at a time; the button comes back whether or not it landed.
+      if (btn) btn.disabled = true;
+      try { await createCapsule(form); } finally { if (btn) btn.disabled = false; }
+    }
     if (form.dataset.form === "entry") await addEntry(form);
   } catch (e) {
-    showError(e.message);
+    showFormError(form, e.message);
   }
 });
 
