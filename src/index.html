@@ -188,7 +188,7 @@ async function dbq(sql, params = []) {
     body: JSON.stringify({ sql, params }),
   });
   const json = await res.json().catch(() => null);
-  if (!res.ok || !json || typeof json !== "object" || json.error) throw new Error(json?.error || "Couldn’t reach the hub. Try again.");
+  if (!res.ok || !json || typeof json !== "object" || json.error) throw Object.assign(new Error(json?.error || "Couldn’t reach the hub. Try again."), { status: res.status });
   return json;
 }
 
@@ -439,14 +439,24 @@ async function addEntry(form) {
       if (attachment) {
         // The entry is sealed by now. A file that then fails to attach must
         // not read as an unsaved entry, or sending again would seal it twice.
+        let attached = false, refused = false;
         try {
-          await dbq(
+          const res = await dbq(
             `INSERT INTO app_time_capsule__attachments
              (id, entry_id, capsule_id, uploaded_by, file_name, file_ref, content_type, created_at)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             [attachment.id, attachment.entry_id, attachment.capsule_id, attachment.uploaded_by, attachment.file_name, attachment.file_ref, attachment.content_type, attachment.created_at]
           );
-        } catch {
+          attached = res.changed !== 0;
+          refused = !attached;
+        } catch (e) {
+          console.error(e);
+          refused = e.status === 403;
+        }
+        if (!attached) {
+          // Refused by the hub, so nothing refers to the file: discard it,
+          // best-effort. With no answer it may be attached, and is left alone.
+          if (refused) files.delete(attachment.file_ref).catch(() => {});
           entries.push(entry);
           return showError("Entry sealed, but the file couldn’t be attached.");
         }
