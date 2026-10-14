@@ -136,7 +136,7 @@ import {
   capsuleEntries as capsuleEntriesOf, entryAttachments as entryAttachmentsOf,
   memberById as memberByIdOf, canAddEntry, canReadEntries, effectiveStatus,
   isMine as isMineOf, visibleEntries as visibleEntriesOf, filteredCapsules as filteredCapsulesOf, searchableFields,
-  calendarRef,
+  calendarRef, outcomeUnknown, failureLine, uploadFailureLine,
 } from "./logic.js";
 
 const CONTEXT = window.__CONTEXT_URL ?? window.__FAMILY_HUB_CONTEXT_URL ?? "";
@@ -188,7 +188,7 @@ async function dbq(sql, params = []) {
     body: JSON.stringify({ sql, params }),
   });
   const json = await res.json().catch(() => null);
-  if (!res.ok || !json || typeof json !== "object" || json.error) throw Object.assign(new Error(json?.error || "Couldn’t reach the hub. Try again."), { status: res.status });
+  if (!res.ok || !json || typeof json !== "object" || json.error) throw Object.assign(new Error(json?.error || "Couldn’t reach the hub. Try again."), { status: res.status, code: json?.code });
   return json;
 }
 
@@ -307,7 +307,9 @@ async function refresh() {
     if (selectedCapsuleId && !capsules.some(c => c.id === selectedCapsuleId)) selectedCapsuleId = null;
     render();
   } catch (e) {
-    if (loaded) error = e.message; else loadFailed = true;
+    // The hub's text stays in the console; what is on screen stays.
+    console.error(e);
+    if (loaded) error = "Couldn’t refresh."; else loadFailed = true;
     render();
   }
 }
@@ -340,8 +342,12 @@ async function createCapsule(form) {
   const title = form.title.value.trim();
   const revealDate = form.reveal_date.value;
   if (!title || !revealDate) return showFormError(form, "Title and reveal date are required.");
-  const capsule = {
-    id: uid("capsule"),
+  let savedNote = "";
+  // The id is the form's, minted on its first Create and sent on every retry:
+  // a try whose answer was lost may have stored the capsule, and a second press
+  // must find it rather than store another and announce it twice.
+  let capsule = {
+    id: (form.dataset.rowId ||= uid("capsule")),
     title,
     occasion: form.occasion.value.trim(),
     reveal_date: revealDate,
@@ -364,9 +370,26 @@ async function createCapsule(form) {
       );
     } catch (e) {
       console.error(e);
-      return showFormError(form, "Couldn’t create the capsule — try again.");
+      // Unknown outcome: read the capsule back by the pinned id. Found means an
+      // earlier try landed and its success path never ran: it runs now, once.
+      // Not found, or the read failed: the usual line, the id stays pinned.
+      let stored = null;
+      let readFailed = false;
+      if (outcomeUnknown(e)) {
+        try { stored = (await dbq("SELECT * FROM app_time_capsule__capsules WHERE id = ?", [capsule.id])).rows?.[0] ?? null; }
+        catch (readErr) { console.error(readErr); readFailed = true; }
+      }
+      // The id is ours: with the read-back failed, a UNIQUE answer may be this
+      // form's own first try, so nothing is known — "try again", not "already exists".
+      if (!stored) return showFormError(form, failureLine(readFailed ? null : e, { action: "create the capsule", thing: "capsule" }));
+      if (["title", "occasion", "reveal_date", "prompt"].some((k) => String(stored[k] ?? "") !== String(capsule[k] ?? ""))) {
+        savedNote = "Saved as first entered — check it and update what changed.";
+      }
+      capsule = { ...capsule, ...stored };
     }
   }
+  delete form.dataset.rowId;
+  capsules = capsules.filter((c) => c.id !== capsule.id);
   capsules.push(capsule);
   capsules.sort((a, b) => (a.reveal_date || "").localeCompare(b.reveal_date || "") || a.created_at.localeCompare(b.created_at));
   form.reset();
@@ -375,6 +398,7 @@ async function createCapsule(form) {
   view = "active";
   clearMessages();
   render();
+  if (savedNote) showError(savedNote);
   publishEvent("time_capsule.created", capsule.id, {
     title: capsule.title, reveal_date: capsule.reveal_date, source_ref_id: calendarRef(capsule.id),
   });
@@ -432,7 +456,7 @@ async function addEntry(form) {
         );
       } catch (e) {
         console.error(e);
-        throw new Error("Couldn’t seal the entry — try again.");
+        throw e;
       }
       // Sealed: the upload belongs to this entry now, not to the form.
       pendingUpload = null;
@@ -468,8 +492,10 @@ async function addEntry(form) {
     showNotice("Entry sealed.");
   } catch (e) {
     // Nothing was sealed: the form stays as typed, file included, to send again.
+    // A refused upload or entry says why in this app's words; never the hub's.
+    console.error(e);
     if (btn) { btn.disabled = false; btn.textContent = "Seal Entry"; }
-    showFormError(form, e.message);
+    showFormError(form, uploadFailureLine(e, { action: "seal the entry", thing: "entry" }));
   }
 }
 
@@ -492,13 +518,21 @@ async function updateCapsuleStatus(capsule, status) {
       );
     } catch (e) {
       console.error(e);
-      return showError("Couldn’t update the capsule — try again.");
+      return showError(failureLine(e, { action: "update the capsule", thing: "capsule" }));
     }
     // An archived capsule is frozen: the hub changes nothing and says so only
-    // in the count. Someone else archived it, so show what the hub holds.
+    // in the count. Re-read it: gone is removed; another status is someone
+    // else's change; the same status is the row policy refusing this member.
+    // Then show what the hub holds.
     if (res.changed === 0) {
+      let found = null, moved = false;
+      try {
+        const stored = (await dbq("SELECT status FROM app_time_capsule__capsules WHERE id = ?", [capsule.id])).rows?.[0] ?? null;
+        found = !!stored;
+        moved = !!stored && stored.status !== capsule.status;
+      } catch (readErr) { console.error(readErr); }
       await refresh();
-      return showError("This capsule can no longer be changed.");
+      return showError(failureLine(null, { action: "update the capsule", thing: "capsule", found, guarded: moved }));
     }
   }
   Object.assign(capsule, { status, [stampField]: stampValue });
@@ -822,7 +856,10 @@ document.addEventListener("submit", async (event) => {
     }
     if (form.dataset.form === "entry") await addEntry(form);
   } catch (e) {
-    showFormError(form, e.message);
+    console.error(e);
+    showFormError(form, failureLine(e, form.dataset.form === "create"
+      ? { action: "create the capsule", thing: "capsule" }
+      : { action: "seal the entry", thing: "entry" }));
   }
 });
 

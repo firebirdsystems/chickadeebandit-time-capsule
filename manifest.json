@@ -26,7 +26,10 @@
     "attachments": { "columns": ["file_ref"] }
   },
   "delete_cascades": {
-    "capsules": [{ "table": "attachments", "foreign_key": "capsule_id", "file_id_column": "file_ref" }],
+    "capsules": [
+      { "table": "attachments", "foreign_key": "capsule_id", "file_id_column": "file_ref" },
+      { "table": "entries", "foreign_key": "capsule_id" }
+    ],
     "entries": [{ "table": "attachments", "foreign_key": "entry_id", "file_id_column": "file_ref" }]
   },
   "row_policies": {
