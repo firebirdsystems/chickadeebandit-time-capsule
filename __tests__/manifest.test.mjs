@@ -145,3 +145,16 @@ if (manifest.ai_access) {
     });
   }
 }
+
+describe("only a capsule's creator seals, reveals or archives it", () => {
+  const acls = manifest.row_policies.capsules.column_write_acls;
+  for (const column of ["status", "reveal_date", "closed_at", "revealed_at", "archived_at"]) {
+    it(`${column} is the creator's to change`, () => {
+      expect(acls[column]).toEqual({ writable_by: ["adult_owner"], owner_column: "created_by_id", actions: ["update"] });
+    });
+  }
+  it("nobody can make themselves the creator", () => {
+    expect(acls.created_by_id).toEqual({ writable_by: [], actions: ["update"] });
+  });
+});
+

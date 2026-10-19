@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   nextYear, fmtDate, statusLabel, capsuleEntries, entryAttachments,
-  memberById, canAddEntry, canReadEntries, effectiveStatus, isMine, visibleEntries, filteredCapsules, searchableFields,
+  memberById, canAddEntry, canManageCapsule, canReadEntries, effectiveStatus, isMine, visibleEntries, filteredCapsules, searchableFields,
   calendarRef,
 } from "../src/logic.js";
 
@@ -150,3 +150,22 @@ describe("calendarRef", () => {
     expect(calendarRef("c1")).not.toBe(calendarRef("c2"));
   });
 });
+
+describe("canManageCapsule", () => {
+  const capsule = { id: "c1", created_by_id: "m1" };
+  it("is the creator's, when an adult", () => {
+    expect(canManageCapsule(capsule, "m1", true)).toBe(true);
+  });
+  it("is not another adult's", () => {
+    expect(canManageCapsule(capsule, "m2", true)).toBe(false);
+  });
+  it("is not the creator's once they are no longer an adult", () => {
+    expect(canManageCapsule(capsule, "m1", false)).toBe(false);
+  });
+  it("is nobody's for a capsule an automation made: it opens on its date", () => {
+    const auto = { id: "c2", created_by_id: "automation" };
+    expect(canManageCapsule(auto, "m1", true)).toBe(false);
+    expect(canManageCapsule(auto, undefined, true)).toBe(false);
+  });
+});
+

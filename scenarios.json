@@ -94,6 +94,23 @@
           "expect": { "status": 200, "rowCount": 1, "rowsContain": [{ "body": "original body" }] }
         }
       ]
+    },
+    {
+      "name": "only the capsule's creator can reveal it early, move its date, or take it over; the reveal is one-way",
+      "members": {"a": "adult", "b": "adult", "c": "child"},
+      "steps": [
+        {"action": "seedRaw", "sql": "INSERT INTO app_time_capsule__capsules (id, title, reveal_date, status, created_by_id, created_by_name, created_at) VALUES ('cap1', 'Class of 2036', '2036-06-01', 'closed', ?, 'A', '2026-01-01T00:00:00Z')", "params": ["{{a}}"]},
+        {"action": "seedRaw", "sql": "INSERT INTO app_time_capsule__entries (id, capsule_id, member_id, member_name, entry_type, title, body, created_at, updated_at) VALUES ('e_a', 'cap1', ?, 'A', 'letter', 'From A', 'a body', '2026-01-01T00:00:00Z', '2026-01-01T00:00:00Z'), ('e_c', 'cap1', ?, 'C', 'memory', 'From C', 'c body', '2026-01-01T00:00:00Z', '2026-01-01T00:00:00Z')", "params": ["{{a}}", "{{c}}"]},
+        {"action": "db", "as": "b", "sql": "UPDATE app_time_capsule__capsules SET status = 'revealed', revealed_at = '2026-02-01T00:00:00Z' WHERE id = 'cap1'", "expect": {"status": 200}},
+        {"action": "db", "as": "b", "sql": "UPDATE app_time_capsule__capsules SET reveal_date = '2000-01-01' WHERE id = 'cap1'", "expect": {"status": 200}},
+        {"action": "db", "as": "b", "sql": "SELECT status, reveal_date FROM app_time_capsule__capsules WHERE id = 'cap1'", "expect": {"status": 200, "rowCount": 1, "rowsContain": [{"status": "closed", "reveal_date": "2036-06-01"}]}},
+        {"action": "db", "as": "b", "sql": "SELECT id FROM app_time_capsule__entries WHERE capsule_id = 'cap1'", "expect": {"status": 200, "rowCount": 0}},
+        {"action": "db", "as": "b", "sql": "UPDATE app_time_capsule__capsules SET created_by_id = ? WHERE id = 'cap1'", "params": ["{{b}}"], "expect": {"status": 403, "errorIncludes": "created_by_id"}},
+        {"action": "db", "as": "a", "sql": "UPDATE app_time_capsule__capsules SET status = 'revealed', revealed_at = '2026-02-01T00:00:00Z' WHERE id = 'cap1'", "expect": {"status": 200}},
+        {"action": "db", "as": "b", "sql": "SELECT id FROM app_time_capsule__entries WHERE capsule_id = 'cap1'", "expect": {"status": 200, "rowCount": 2}},
+        {"action": "db", "as": "a", "sql": "UPDATE app_time_capsule__capsules SET status = 'closed' WHERE id = 'cap1'", "expect": {"status": 200}},
+        {"action": "db", "as": "a", "sql": "SELECT status FROM app_time_capsule__capsules WHERE id = 'cap1'", "expect": {"status": 200, "rowCount": 1, "rowsContain": [{"status": "revealed"}]}}
+      ]
     }
   ]
 }

@@ -134,7 +134,7 @@ import { esc, isAdult, memberColor, initial, hubConfirm, createFilesHelper, sear
 import {
   nextYear, fmtDate, statusLabel,
   capsuleEntries as capsuleEntriesOf, entryAttachments as entryAttachmentsOf,
-  memberById as memberByIdOf, canAddEntry, canReadEntries, effectiveStatus,
+  memberById as memberByIdOf, canAddEntry, canManageCapsule, canReadEntries, effectiveStatus,
   isMine as isMineOf, visibleEntries as visibleEntriesOf, filteredCapsules as filteredCapsulesOf, searchableFields,
   calendarRef, outcomeUnknown, failureLine, uploadFailureLine,
 } from "./logic.js";
@@ -173,6 +173,7 @@ let notice = "";
 function nowIso() { return new Date().toISOString(); }
 function uid(prefix) { return `${prefix}-${crypto.randomUUID()}`; }
 function canManage() { return isAdult(currentMember); }
+function managesCapsule(capsule) { return canManageCapsule(capsule, currentMember?.id, isAdult(currentMember)); }
 function selectedCapsule() { return capsules.find(c => c.id === selectedCapsuleId) ?? null; }
 function capsuleEntries(capsuleId) { return capsuleEntriesOf(entries, capsuleId); }
 function entryAttachments(entryId) { return entryAttachmentsOf(attachments, entryId); }
@@ -500,7 +501,7 @@ async function addEntry(form) {
 }
 
 async function updateCapsuleStatus(capsule, status) {
-  if (!canManage()) return showError("Only adults can change capsule status.");
+  if (!managesCapsule(capsule)) return showError("Only the person who made this capsule can seal, reveal or archive it.");
   const ok = await hubConfirm(`${statusLabel(status)} "${capsule.title}"?`);
   if (!ok) return;
   const fields = {
@@ -685,6 +686,15 @@ function renderCapsuleActions(capsule) {
   // Once the reveal date has passed the hub already releases entries to everyone, so
   // the manual Seal/Reveal boundary no longer applies — only offer them while sealed.
   const released = canReadEntries(capsule);
+  if (!managesCapsule(capsule)) {
+    if (effectiveStatus(capsule) === "archived") return "";
+    // The hub refuses anyone else's status change, so say whose it is instead.
+    const creator = memberById(capsule.created_by_id);
+    const note = creator
+      ? `Only ${esc(creator.name)} can ${released ? "archive it" : capsule.status === "open" ? "seal it" : "reveal it early"}.`
+      : released ? "" : `It opens by itself on ${fmtDate(capsule.reveal_date)}.`;
+    return note ? `<p class="muted tiny" data-testid="capsule-owner-note" style="margin-top:12px">${note}</p>` : "";
+  }
   const close = !released && capsule.status === "open" ? `<button class="btn btn-ghost btn-sm" data-status="closed">Seal</button>` : "";
   const reveal = !released && capsule.status === "closed" ? `<button class="btn btn-sm" data-status="revealed">Reveal early</button>` : "";
   const archive = effectiveStatus(capsule) === "revealed" ? `<button class="btn btn-ghost btn-sm" data-status="archived">Archive</button>` : "";

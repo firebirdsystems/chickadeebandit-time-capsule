@@ -49,6 +49,14 @@ export function memberById(members, id) {
   return members.find(m => m.id === id) ?? null;
 }
 
+// Sealing, revealing early and archiving belong to the capsule's creator, when
+// an adult — the hub refuses anyone else's status change (column_write_acls,
+// adult_owner on created_by_id). A capsule an automation made has no member
+// creator, so nobody manages it: it opens on its reveal date.
+export function canManageCapsule(capsule, memberId, isAdultMember) {
+  return !!isAdultMember && !!memberId && capsule?.created_by_id === memberId;
+}
+
 export function canAddEntry(capsule) {
   return capsule?.status === "open";
 }

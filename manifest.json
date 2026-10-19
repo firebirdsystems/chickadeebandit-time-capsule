@@ -38,6 +38,14 @@
       "frozen_when": {
         "status_column": "status",
         "locked_values": ["archived"]
+      },
+      "column_write_acls": {
+        "status": { "writable_by": ["adult_owner"], "owner_column": "created_by_id", "actions": ["update"] },
+        "reveal_date": { "writable_by": ["adult_owner"], "owner_column": "created_by_id", "actions": ["update"] },
+        "closed_at": { "writable_by": ["adult_owner"], "owner_column": "created_by_id", "actions": ["update"] },
+        "revealed_at": { "writable_by": ["adult_owner"], "owner_column": "created_by_id", "actions": ["update"] },
+        "archived_at": { "writable_by": ["adult_owner"], "owner_column": "created_by_id", "actions": ["update"] },
+        "created_by_id": { "writable_by": [], "actions": ["update"] }
       }
     },
     "entries": {
