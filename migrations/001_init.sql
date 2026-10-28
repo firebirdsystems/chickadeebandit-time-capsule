@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS app_time_capsule__capsules (
-  id TEXT PRIMARY KEY,
+  id TEXT NOT NULL PRIMARY KEY,
   title TEXT NOT NULL,
   occasion TEXT DEFAULT '',
   reveal_date TEXT NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS app_time_capsule__capsules (
 );
 
 CREATE TABLE IF NOT EXISTS app_time_capsule__entries (
-  id TEXT PRIMARY KEY,
+  id TEXT NOT NULL PRIMARY KEY,
   capsule_id TEXT NOT NULL,
   member_id TEXT NOT NULL,
   member_name TEXT NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS app_time_capsule__entries (
 );
 
 CREATE TABLE IF NOT EXISTS app_time_capsule__attachments (
-  id TEXT PRIMARY KEY,
+  id TEXT NOT NULL PRIMARY KEY,
   entry_id TEXT NOT NULL,
   capsule_id TEXT NOT NULL,
   uploaded_by TEXT NOT NULL,
